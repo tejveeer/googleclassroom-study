@@ -6,10 +6,9 @@ export function createApp(deps) {
   const app = express();
 
   app.use(express.json());
-
   const apiRouter = createApiRouter(deps);
-  app.use('/api', apiRouter);
 
+  app.use('/api', apiRouter);
   app.use(errorMiddleware);
 
   return app;

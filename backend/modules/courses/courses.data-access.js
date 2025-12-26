@@ -20,6 +20,11 @@ export const repository = {
     VALUES ($1, $2, $3, $4, $5)
     RETURNING *;
   `,
+  GET_COURSE_CREATOR_ID: `
+    SELECT creator_id
+    FROM classroom.courses
+    WHERE id = $1
+  `,
   GET_COURSEID_FROM_JOINID: `
     SELECT id
     FROM classroom.courses

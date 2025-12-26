@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-export function createApiRouter(deps) {
+export function createApiRouter({ authRouter, coursesRouter, postsRouter, assignmentsRouter }) {
   const router = Router();
 
   // Example route using dependencies
@@ -8,7 +8,10 @@ export function createApiRouter(deps) {
     res.json({ status: 'ok' });
   });
 
-  // Additional routes can be added here using deps
+  router.use('/auth', authRouter);
+  router.use('/courses', coursesRouter);
+  router.use('/posts', postsRouter);
+  router.use('/assignments', assignmentsRouter);
 
   return router;
 }
