@@ -41,7 +41,9 @@ CREATE TABLE IF NOT EXISTS classroom.course_members (
   role       classroom.course_role NOT NULL,
   joined_at  timestamptz NOT NULL DEFAULT now(),
   left_at    timestamptz NULL,
-  UNIQUE (user_id, course_id)
+
+  UNIQUE (user_id, course_id),
+  UNIQUE (id, course_id)
 );
 
 -- TOPICS (composite PK)
@@ -65,9 +67,10 @@ CREATE TABLE IF NOT EXISTS classroom.course_assignments (
   created_at             timestamptz NOT NULL DEFAULT now(),
 
   -- enforce topic belongs to same course (composite FK)
-  FOREIGN KEY (course_id, topic)
-    REFERENCES classroom.course_topics(course_id, topic)
-    ON DELETE SET NULL
+  CONSTRAINT fk_topic
+    FOREIGN KEY (course_id, topic)
+      REFERENCES classroom.course_topics(course_id, topic)
+      ON DELETE SET NULL
 );
 
 -- SUBMISSION STATUS TYPE
@@ -95,10 +98,14 @@ CREATE TABLE IF NOT EXISTS classroom.course_student_submissions (
 CREATE TABLE IF NOT EXISTS classroom.course_posts (
   id         integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   course_id  integer NOT NULL REFERENCES classroom.courses(id) ON DELETE CASCADE,
-  member_id  integer NOT NULL REFERENCES classroom.course_members(id) ON DELETE CASCADE,
+  member_id  integer NOT NULL,
   content    text NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now(),
+
+  CONSTRAINT fk_member
+    FOREIGN KEY (member_id, course_id)
+    REFERENCES classroom.course_members(id, course_id) ON DELETE CASCADE
 );
 
 -- POST COMMENTS
