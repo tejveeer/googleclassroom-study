@@ -48,29 +48,26 @@ CREATE TABLE IF NOT EXISTS classroom.course_members (
 
 -- TOPICS (composite PK)
 CREATE TABLE IF NOT EXISTS classroom.course_topics (
+  id         integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   course_id  integer NOT NULL REFERENCES classroom.courses(id) ON DELETE CASCADE,
   topic      text   NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
-  PRIMARY KEY (course_id, topic)
+
+  UNIQUE (course_id, topic)
 );
 
 -- ASSIGNMENTS
 CREATE TABLE IF NOT EXISTS classroom.course_assignments (
   id                    integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   course_id              integer NOT NULL REFERENCES classroom.courses(id) ON DELETE CASCADE,
-  creator_member_id      integer NOT NULL REFERENCES classroom.course_members(id) ON DELETE RESTRICT,
-  topic                  text NULL,
+  creator_member_id      integer NOT NULL REFERENCES classroom.course_members(id) ON DELETE SET NULL,
+  topic_id               integer NULL REFERENCES classroom.course_topics(id) ON DELETE CASCADE,
   assignment_name        text NOT NULL,
   accepting_submissions  boolean NOT NULL DEFAULT true,
   instructions           text NOT NULL,
+  due_date               timestamptz NOT NULL,
   total_marks            integer NOT NULL CHECK (total_marks >= 0),
-  created_at             timestamptz NOT NULL DEFAULT now(),
-
-  -- enforce topic belongs to same course (composite FK)
-  CONSTRAINT fk_topic
-    FOREIGN KEY (course_id, topic)
-      REFERENCES classroom.course_topics(course_id, topic)
-      ON DELETE SET NULL
+  created_at             timestamptz NOT NULL DEFAULT now()
 );
 
 -- SUBMISSION STATUS TYPE

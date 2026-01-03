@@ -27,21 +27,23 @@ function createAssignmentsService(pool) {
     async createAssignment(
       courseId,
       creatorMemberId,
-      topic,
+      topicId,
       assignmentName,
       instructions,
-      totalMarks
+      totalMarks,
+      dueDate
     ) {
       const isAcceptingSubmissions = true;
 
       const { rows, rowCount } = await pool.query(repository.CREATE_ASSIGNMENT, [
         courseId,
         creatorMemberId,
-        topic,
+        topicId,
         isAcceptingSubmissions,
         assignmentName,
         instructions,
         totalMarks,
+        dueDate
       ]);
 
       if (rowCount === 0) {
@@ -90,18 +92,17 @@ function createTopicsService(pool) {
       return { success: true, data: rows[0] };
     },
 
-    async deleteTopic(courseId, topic) {
+    async deleteTopic(courseId, topicId) {
       const { rows, rowCount } = await pool.query(repository.DELETE_TOPIC, [
         courseId,
-        topic,
+        topicId,
       ]);
 
       if (rowCount === 0) {
         return { success: false, reason: "DELETION_FAILED" };
       }
 
-      // NOTE: repository.DELETE_TOPIC currently does NOT "RETURNING *"
-      return { success: true, data: rows?.[0] ?? null };
+      return { success: true, data: rows[0] };
     },
   };
 }
@@ -148,32 +149,40 @@ function createSubmissionsService(pool) {
       return { success: true, data: rows[0] };
     },
 
-    async updateAssignmentSubmissionStatus(courseId, assignmentId) {
+    async updateAssignmentSubmissionStatus(courseId, assignmentId, value) {
       const { rows, rowCount } = await pool.query(
         repository.UPDATE_ASSIGNMENT_SUBMISSION_STATUS,
-        [courseId, assignmentId]
+        [courseId, assignmentId, value]
       );
 
       if (rowCount === 0) {
         return { success: false, reason: "UPDATE_FAILED" };
       }
 
-      // NOTE: repository.UPDATE_ASSIGNMENT_SUBMISSION_STATUS currently does NOT update anything
-      // (query is identical to LIST_ASSIGNMENT_SUBMISSION_STATUS in your repo)
       return { success: true, data: rows[0] };
     },
 
     async createStudentSubmission(assignmentId, studentMemberId, content) {
-      const { rows, rowCount } = await pool.query(
+      const { rows, rowCount } = await pool.query(repository.GET_ASSIGNMENT_DUE_DATE, [assignmentId]);
+      if (rowCount === 0) {
+        return { success: false, reason: "ASSIGNMENT_DOES_NOT_EXIST" };
+      }
+
+      const dueDate = new Date(rows[0].due_date).getTime();
+      if (Date.now() > dueDate) {
+        return { success: false, reason: "PAST_DUE_DATE" };
+      }
+
+      const { rows: rows2, rowCount: rowCount2 } = await pool.query(
         repository.ADD_STUDENT_SUBMISSION,
         [assignmentId, studentMemberId, content]
       );
 
-      if (rowCount === 0) {
+      if (rowCount2 === 0) {
         return { success: false, reason: "CREATION_FAILED" };
       }
 
-      return { success: true, data: rows[0] };
+      return { success: true, data: rows2[0] };
     },
 
     async updateStudentSubmissionMark(

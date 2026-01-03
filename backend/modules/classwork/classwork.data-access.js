@@ -4,7 +4,7 @@ export const repository = {
       ca.id,
       ca.course_id,
       ca.assignment_name,
-      ca.topic,
+      ca.topic_id,
       ca.accepting_submissions,
       ca.instructions,
       ca.total_marks,
@@ -29,9 +29,9 @@ export const repository = {
   `,
   CREATE_ASSIGNMENT: `
     INSERT INTO classroom.course_assignments
-      (course_id, creator_member_id, topic, accepting_submissions, assignment_name, instructions, total_marks)
+      (course_id, creator_member_id, topic_id, accepting_submissions, assignment_name, instructions, total_marks, due_date)
     VALUES
-      ($1, $2, $3, $4, $5, $6, $7)
+      ($1, $2, $3, $4, $5, $6, $7, $8)
     RETURNING *;
   `,
   CREATE_TOPIC: `
@@ -47,7 +47,8 @@ export const repository = {
   `,
   DELETE_TOPIC: `
     DELETE FROM classroom.course_topics
-    WHERE course_id = $1 AND topic = $2;
+    WHERE course_id = $1 AND id = $2
+    RETURNING *;
   `,
 
   LIST_ALL_ASSIGNMENT_GRADES: `
@@ -110,6 +111,11 @@ export const repository = {
     WHERE course_id = $1
       AND id = $2;
   `,
+  GET_ASSIGNMENT_DUE_DATE: `
+    SELECT due_date
+    FROM classroom.course_assignments
+    WHERE id = $1
+  `,
   UPDATE_ASSIGNMENT_SUBMISSION_STATUS: `
     UPDATE classroom.course_assignments
     SET accepting_submissions = $3
@@ -117,7 +123,6 @@ export const repository = {
       AND id = $2
     RETURNING *;
   `,
-
   ADD_STUDENT_SUBMISSION: `
     INSERT INTO classroom.course_student_submissions (assignment_id, student_member_id, content)
     VALUES ($1, $2, $3)
@@ -137,5 +142,5 @@ export const repository = {
     WHERE assignment_id = $1
       AND student_member_id = $2
     RETURNING *;
-  `
+  `,
 };
