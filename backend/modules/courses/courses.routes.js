@@ -7,6 +7,8 @@ export function createCoursesRouter({ coursesController }) {
   router.get('/', asyncHandler(coursesController.list));
   router.post('/create', asyncHandler(coursesController.create));
   router.post('/join', asyncHandler(coursesController.join));
+
+  // require course owner middleware
   router.delete('/:id', asyncHandler(coursesController.delete));
 
   return router;
