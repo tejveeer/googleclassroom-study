@@ -1,7 +1,7 @@
 import { createApp } from './app.js';
 import { createDependencies }  from './config/deps.js';
 
-const PORT = Number(process.env.PORT ?? 3000);
+const PORT = 3000;
 
 const deps = createDependencies();
 const app = createApp(deps);
