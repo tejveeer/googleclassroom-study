@@ -1,5 +1,5 @@
 import express from 'express';
-import { createApiRouter } from './routes/index.js';
+import { createApiRouter } from './index.js';
 import { errorMiddleware  } from './middlewares/error.middleware.js';
 
 export function createApp(deps) {

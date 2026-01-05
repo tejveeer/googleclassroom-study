@@ -1,6 +1,6 @@
 import { repository } from "./classwork.data-access";
 
-export function createClassworkService(pool) {
+export function createClassworkService({ pool }) {
   const assignments = createAssignmentsService(pool);
   const topics = createTopicsService(pool);
   const grades = createGradesService(pool);
