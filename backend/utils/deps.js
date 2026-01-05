@@ -8,7 +8,7 @@ export function createDependencies() {
 
   const coursesService = createCoursesService({ pool });
   const coursesController = createCoursesController({ coursesService });
-  const coursesRouter = createCoursesRouter({ coursesController});
+  const coursesRouter = createCoursesRouter({ coursesController });
 
   return {
     pool,

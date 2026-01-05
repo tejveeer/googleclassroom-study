@@ -1,2 +1,116 @@
-export function requireAuth(err, req, res, next) {}
-export function requireCourseMember(err, req, res, next) {}
+export function requireAuth(req, res, next) {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "UNAUTHENTICATED" });
+  }
+
+  const token = auth.slice("Bearer ".length);
+
+  try {
+    const payload = jwt.verify(token, env.JWT_SECRET);
+    req.body.userId = payload.userId;
+    return next();
+  } catch {
+    return res.status(401).json({ error: "INVALID_TOKEN" });
+  }
+}
+
+export function requireCourseMember(pool) {
+  return async (req, res, next) => {
+    try {
+      const courseId = req.params.courseId;
+      const userId = req.body.userId;
+
+      const isMemberResult = await isCourseMember(pool, courseId, userId);
+      if (isMemberResult.success) {
+        req.memberId = isMemberResult.data;
+        return next();
+      } else {
+        return res.status(403).json({ error: "NOT_COURSE_MEMBER" });
+      }
+    } catch (err) {
+      return next(err);
+    }
+  };
+}
+
+export function requireTeacher(pool) {
+  return async (req, res, next) => {
+    try {
+      const courseId = req.params.courseId;
+      const userId = req.body.userId;
+
+      const isTeacherResult = await isTeacher(pool, courseId, userId);
+      if (!isTeacherResult.success) {
+        return res.status(403).json({ error: "NOT_A_TEACHER" });
+      }
+
+      return next();
+    } catch (err) {
+      return next(err);
+    }
+  }
+}
+
+export function requireStudent(pool) {
+  return async (req, res, next) => {
+    try {
+      const courseId = req.params.courseId;
+      const userId = req.body.userId;
+
+      const isStudentResult = await isStudent(pool, courseId, userId);
+      if (!isStudentResult.success) {
+        return res.status(403).json({ error: "NOT_A_STUDENT" });
+      }
+
+      return next();
+    } catch (err) {
+      return next(err);
+    }
+  }
+}
+
+// HELPERS
+async function isCourseMember(pool, courseId, userId) {
+  const res = await pool.query(`
+    SELECT member_id
+    FROM classroom.course_members
+    WHERE course_id = $1 AND user_id = $2
+  `, [courseId, userId]);
+
+  if (res.rows.length !== 0) {
+    return { success: true, data: res.rows[0].member_id };
+  }
+
+  return { success: false };
+}
+
+async function isTeacher(pool, courseId, userId) {
+  const res = await pool.query(`
+    SELECT 1
+    FROM classroom.course_members
+    WHERE course_id = $1 AND user_id = $2 AND role = 'teacher'
+    LIMIT 1
+  `, [courseId, userId]);
+
+  if (res.rows.length !== 0) {
+    return { success: true };
+  }
+
+  return { success: false };
+}
+
+async function isStudent(pool, courseId, userId) {
+  const res = await pool.query(`
+    SELECT 1
+    FROM classroom.course_members
+    WHERE course_id = $1 AND user_id = $2 AND role = 'student'
+    LIMIT 1
+  `, [courseId, userId]);
+
+  if (res.rows.length !== 0) {
+    return { success: true };
+  }
+
+  return { success: false };
+}
