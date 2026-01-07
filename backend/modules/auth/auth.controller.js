@@ -4,12 +4,12 @@ import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import { CREATE_USER } from "./auth.data-access.js";
 
-export function createAuthController({ pool, env }) {
-  const client = new OAuth2Client(
-    process.env.AUTH_CLIENT_SECRET,
-    process.env.AUTH_CLIENT_ID,
-    process.env.AUTH_REDIRECT_URL
-  );
+export function createAuthController({ pool }) {
+  const client = new OAuth2Client({
+    clientSecret: process.env.AUTH_CLIENT_SECRET,
+    clientId: process.env.AUTH_CLIENT_ID,
+    redirectUri: process.env.AUTH_REDIRECT_URL
+  });
 
   return {
     async googleAuth(_, res) {
@@ -22,12 +22,11 @@ export function createAuthController({ pool, env }) {
 
     async googleCallback(req, res) {
       const { code } = req.query;
-
       const { tokens } = await client.getToken(code);
 
       const ticket = await client.verifyIdToken({
         idToken: tokens.id_token,
-        audience: env.GOOGLE_CLIENT_ID,
+        audience: process.env.AUTH_CLIENT_ID,
       });
 
       const payload = ticket.getPayload();
@@ -41,7 +40,7 @@ export function createAuthController({ pool, env }) {
 
       const token = jwt.sign(
         { userId: user.id },
-        env.JWT_SECRET,
+        process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
 
