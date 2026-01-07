@@ -1,5 +1,5 @@
 import { createApp } from './app.js';
-import { createDependencies }  from './config/deps.js';
+import { createDependencies }  from './deps.js';
 
 const PORT = 3000;
 

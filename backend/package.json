@@ -5,7 +5,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "start": "node setup/server.js"
   },
   "keywords": [],
   "author": "",

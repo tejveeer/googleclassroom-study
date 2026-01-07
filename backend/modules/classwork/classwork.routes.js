@@ -1,6 +1,6 @@
 import { Router } from "express";
-import asyncHandler from "../../utils/asyncHandler.js";
-import { requireCourseMember, requireStudent, requireTeacher } from "../../middleware/auth.middleware.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import { requireCourseMember, requireStudent, requireTeacher } from "../../middlewares/auth.middleware.js";
 
 export function createClassworkRouter({ classworkController }) {
   const router = Router();

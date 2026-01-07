@@ -1,5 +1,5 @@
 import { Router } from "express";
-import asyncHandler from "../../utils/asyncHandler";
+import asyncHandler from "../utils/asyncHandler.js";
 
 export function createCoursesRouter({ coursesController }) {
   const router = Router();

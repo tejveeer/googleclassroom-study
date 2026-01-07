@@ -1,6 +1,6 @@
 import { Router } from "express";
-import asyncHandler from "../../utils/asyncHandler";
-import { requireCourseMember } from "../../middleware/auth.middleware";
+import asyncHandler from "../utils/asyncHandler.js";
+import { requireCourseMember } from "../../middlewares/auth.middleware.js";
 
 export function createPostsRouter({ postsController }) {
   const router = Router();

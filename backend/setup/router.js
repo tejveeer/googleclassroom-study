@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAuth } from './middleware/auth.middleware';
+import { requireAuth } from '../middlewares/auth.middleware.js';
 
 export function createApiRouter({ authRouter, coursesRouter, postsRouter, classworkRouter, peopleRouter }) {
   const router = Router();

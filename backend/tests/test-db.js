@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const schemaPath = path.resolve(__dirname, "../config/schema.sql");
+const schemaPath = path.resolve(__dirname, "../migrations/schema.sql");
 
 export async function startTestDb() {
   const container = await new PostgreSqlContainer("postgres:16-alpine").start();

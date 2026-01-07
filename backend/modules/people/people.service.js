@@ -1,4 +1,4 @@
-import { repository } from "./people.data-access"
+import { repository } from "./people.data-access.js"
 
 export function createPeopleService({ pool }) {
   return {

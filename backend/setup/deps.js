@@ -10,7 +10,7 @@ import { createCoursesService } from '../modules/courses/courses.service.js';
 
 import { createPeopleController } from '../modules/people/people.controller.js';
 import { createPeopleRouter } from '../modules/people/people.routes.js';
-import { createPeopleService } from '../modules/people/courses.service.js';
+import { createPeopleService } from '../modules/people/people.service.js';
 
 import { createPostsController } from '../modules/posts/posts.controller.js';
 import { createPostsRouter } from '../modules/posts/posts.routes.js';
@@ -43,18 +43,23 @@ export function createDependencies() {
 
   return {
     pool,
+    
     coursesService,
     coursesController,
     coursesRouter,
+
     classworkService,
     classworkController,
     classworkRouter,
+
     peopleService,
     peopleController,
     peopleRouter,
+
     postsService,
     postsController,
     postsRouter,
+
     authController,
     authRouter
   };
