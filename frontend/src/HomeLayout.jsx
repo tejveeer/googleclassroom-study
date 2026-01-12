@@ -1,0 +1,104 @@
+import { useQuery } from "@tanstack/react-query";
+import { useState, useRef } from "react";
+import { Outlet } from "react-router";
+import { useClickAway } from "react-use";
+
+export function HomeLayout() {
+  const { isPending, data } = useQuery({
+    queryKey: ['courses'],
+    queryFn: fetchUserCourses,
+  });
+
+  return (
+    <div className="min-h-screen grid grid-rows-[80px_1fr] grid-cols-1 select-none lg:grid-cols-[80px_1fr]">
+      <Header />
+      <Sidebar />
+      <Outlet />
+    </div>
+  );
+}
+
+function Header() {
+  const [isDropdownSelected, setIsDropdownSelected] = useState(false);
+  const [isCreateCourseModalSelected, setIsCreateCourseModalSelected] = useState(false);
+
+  const onClickCreate = () => {
+    setIsCreateCourseModalSelected(true);
+    setIsDropdownSelected(false);
+  }
+
+  return (
+    <div className="col-span-2 p-4 h-20 flex justify-between items-center bg-gray-100 cursor-default">
+      {/* Left side */}
+      <div className="flex gap-4 items-center">
+        <div className="hamburger-menu size-10 rounded-lg transition duration-200 ease-in hover:bg-amber-400 cursor-pointer bg-amber-300"></div>
+        <h1 className="text-2xl">Classroom</h1>
+      </div>
+      {/* Right side */}
+      <div className="flex gap-4 items-center">
+        <div className="add-button relative">
+          <button
+            className="
+              text-3xl bg-gray-300 px-2 rounded-md 
+              cursor-pointer hover:bg-gray-400 transition 
+              duration-200 ease-in"
+            onClick={() => setIsDropdownSelected(prev => !prev)}
+          >+</button>
+          {isDropdownSelected && <CourseAddDropdownMenu 
+            setIsDropdownSelected={setIsDropdownSelected}
+            onClickCreate={onClickCreate}
+          />}
+        </div>
+        <div className="profile size-10 rounded-lg transition duration-200 ease-in hover:bg-purple-400 bg-purple-300 cursor-pointer"></div>
+      </div>
+
+      {/* Modals */}
+      {isCreateCourseModalSelected && 
+        <CreateCourseModal setIsCreateCourseModalSelected={setIsCreateCourseModalSelected} />}
+    </div>
+  );
+}
+
+function CourseAddDropdownMenu({ setIsDropdownSelected, onClickCreate }) {
+  const ref = useRef(null);
+  useClickAway(ref, () => setIsDropdownSelected(false));
+
+  return <>
+    <div ref={ref} className="absolute rounded-lg size-32 right-4 top-4 flex flex-col flex-1 gap-1 p-2 bg-gray-300">
+      <button className="flex-1 hover:bg-gray-400 cursor-pointer rounded-md transition duration-100 ease-in">Join</button>
+      <button 
+        className="flex-1 hover:bg-gray-400 cursor-pointer rounded-md transition duration-100 ease-in" 
+        onClick={onClickCreate}>Create</button>
+    </div>
+  </>
+}
+
+function CreateCourseModal({ setIsCreateCourseModalSelected }) {
+  return <>
+    {/* Background */}
+    <div 
+      className="fixed top-0 left-0 flex justify-center items-center min-h-screen w-full bg-black/20"
+      onClick={() => setIsCreateCourseModalSelected(false)}>
+        <div className="w-72 h-72 bg-gray-400 rounded-2xl flex flex-col"
+          onClick={(e) => e.stopPropagation()}>
+          <input type="text" />
+        </div>
+    </div>
+  </>
+}
+
+function JoinCourseModal() {}
+
+function Sidebar() {
+  return (
+    <div className="hidden gap-2 lg:block bg-gray-200">
+      {/* Sidebar content */}
+    </div>
+  );
+}
+
+async function fetchUserCourses() {
+  return await fetch('http://localhost:3000/api/courses/', {
+    credentials: "include"
+  });
+}
