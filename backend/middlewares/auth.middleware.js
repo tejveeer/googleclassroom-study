@@ -1,14 +1,22 @@
+import jwt from 'jsonwebtoken';
+import "dotenv/config";
+
 export function requireAuth(req, res, next) {
-  const auth = req.headers.authorization;
-  if (!auth?.startsWith("Bearer ")) {
+  const auth = req.cookies.access_token;
+  if (!auth) {
     return res.status(401).json({ error: "UNAUTHENTICATED" });
   }
 
-  const token = auth.slice("Bearer ".length);
-
   try {
-    const payload = jwt.verify(token, env.JWT_SECRET);
+    const payload = jwt.verify(auth, process.env.JWT_SECRET);
+
+    // I know it's a very bad decision to add userId to body
+    // But I only figured that out after I'd already designed all my controllers
+    // alas, I have to go with this; otherwise I'd have to do a huge refactor
+    // This is a toy project anyways so that doesn't matter a lot
+    req.body = req.body ?? {};
     req.body.userId = payload.userId;
+
     return next();
   } catch {
     return res.status(401).json({ error: "INVALID_TOKEN" });
