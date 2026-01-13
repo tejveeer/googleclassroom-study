@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Outlet } from "react-router";
 import { useClickAway } from "react-use";
+import { toCamel } from "./utility";
 
 export function HomeLayout() {
   const { isPending, data } = useQuery({
@@ -10,11 +11,12 @@ export function HomeLayout() {
     queryFn: fetchUserCourses,
   });
 
+  console.log(data);
   return (
     <div className="min-h-screen grid grid-rows-[80px_1fr] grid-cols-1 select-none lg:grid-cols-[80px_1fr]">
       <Header />
       <Sidebar />
-      <Outlet />
+      {isPending ? <p>Loading...</p> : <Outlet context={toCamel(data)} />}
     </div>
   );
 }
@@ -238,9 +240,26 @@ function Sidebar() {
 }
 
 async function fetchUserCourses() {
-  return await fetch('http://localhost:3000/api/courses/', {
+  const res = await fetch('http://localhost:3000/api/courses/', {
     credentials: "include"
   });
+
+  if (!res.ok) {
+    let message = "Request failed";
+
+    try {
+      const body = await res.json();
+      if (body?.error) {
+        message = body.error;
+      }
+    } catch {
+      // ignore JSON parse errors
+    }
+
+    throw new Error(message);
+  }
+
+  return await res.json();
 }
 
 async function createCourse(courseData) {
