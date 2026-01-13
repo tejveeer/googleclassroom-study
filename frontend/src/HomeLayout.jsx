@@ -22,9 +22,15 @@ export function HomeLayout() {
 function Header() {
   const [isDropdownSelected, setIsDropdownSelected] = useState(false);
   const [isCreateCourseModalSelected, setIsCreateCourseModalSelected] = useState(false);
+  const [isJoinCourseModalSelected, setIsJoinCourseModalSelected] = useState(false);
 
   const onClickCreate = () => {
     setIsCreateCourseModalSelected(true);
+    setIsDropdownSelected(false);
+  }
+
+  const onClickJoinCourse = () => {
+    setIsJoinCourseModalSelected(true);
     setIsDropdownSelected(false);
   }
 
@@ -48,6 +54,7 @@ function Header() {
           {isDropdownSelected && <CourseAddDropdownMenu 
             setIsDropdownSelected={setIsDropdownSelected}
             onClickCreate={onClickCreate}
+            onClickJoinCourse={onClickJoinCourse}
           />}
         </div>
         <div className="profile size-10 rounded-lg transition duration-200 ease-in hover:bg-purple-400 bg-purple-300 cursor-pointer"></div>
@@ -56,17 +63,22 @@ function Header() {
       {/* Modals */}
       {isCreateCourseModalSelected && 
         <CreateCourseModal setIsCreateCourseModalSelected={setIsCreateCourseModalSelected} />}
+      {isJoinCourseModalSelected && 
+        <JoinCourseModal setIsJoinCourseModalSelected={setIsJoinCourseModalSelected} />}
     </div>
   );
 }
 
-function CourseAddDropdownMenu({ setIsDropdownSelected, onClickCreate }) {
+function CourseAddDropdownMenu({ setIsDropdownSelected, onClickCreate, onClickJoinCourse }) {
   const ref = useRef(null);
   useClickAway(ref, () => setIsDropdownSelected(false));
 
   return <>
     <div ref={ref} className="absolute rounded-lg size-32 right-4 top-4 flex flex-col flex-1 gap-1 p-2 bg-gray-300">
-      <button className="flex-1 hover:bg-gray-400 cursor-pointer rounded-md transition duration-100 ease-in">Join</button>
+      <button 
+        className="flex-1 hover:bg-gray-400 cursor-pointer rounded-md transition duration-100 ease-in"
+        onClick={onClickJoinCourse}
+      >Join</button>
       <button 
         className="flex-1 hover:bg-gray-400 cursor-pointer rounded-md transition duration-100 ease-in" 
         onClick={onClickCreate}>Create</button>
@@ -154,13 +166,68 @@ function CreateCourseModal({ setIsCreateCourseModalSelected }) {
           </div>
 
           <input type="submit" value="Submit" />
+          <p>{errors.root && errors.root.message}</p>
         </form>
       </div>
     </>
   );
 }
 
-function JoinCourseModal() {}
+const joinCourseFormRules = {
+  joinId: {
+    required: "Course code is required",
+    maxLength: {
+      value: 10,
+      message: "Course name must be at most 10 characters",
+    },
+    setValueAs: (v) => (typeof v === "string" ? v.trim() : v),
+  },
+};
+
+function JoinCourseModal({ setIsJoinCourseModalSelected }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError
+  } = useForm({ mode: "onSubmit" });
+
+  const queryClient = useQueryClient();
+  const joinCourseMutation = useMutation({
+    mutationFn: joinCourse,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      setIsJoinCourseModalSelected(false);
+    },
+    onError: (err) => {
+      setError("root", { type: "server", message: err.message });
+    },
+  })
+  const onSubmit = (data) => joinCourseMutation.mutate({ ...data, role: 'student' });
+
+  return (
+    <>
+      <div
+        className="fixed top-0 left-0 flex justify-center items-center min-h-screen w-full bg-black/20"
+        onClick={() => setIsJoinCourseModalSelected(false)}
+      >
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="w-72 h-72 bg-gray-400 rounded-2xl flex flex-col"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div>
+            <h1>Course Code</h1>
+            <input {...register("joinId", joinCourseFormRules.joinId)} />
+            {errors.joinId && <p>{errors.joinId.message}</p>}
+          </div>
+          <input type="submit" value="Submit" />
+          <p>{errors.root && errors.root.message}</p>
+        </form>
+      </div>
+    </>
+  );
+}
 
 function Sidebar() {
   return (
@@ -184,6 +251,36 @@ async function createCourse(courseData) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(courseData),
+  });
+
+  // Handle non-2xx responses explicitly
+  if (!res.ok) {
+    let message = "Request failed";
+
+    try {
+      const body = await res.json();
+      if (body?.error) {
+        message = body.error;
+      }
+    } catch {
+      // ignore JSON parse errors
+    }
+
+    throw new Error(message);
+  }
+
+  // 201 Created → body contains course data
+  return res.json();
+}
+
+async function joinCourse(joinCourseData) {
+  const res = await fetch("http://localhost:3000/api/courses/join", {
+    credentials: "include",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(joinCourseData),
   });
 
   // Handle non-2xx responses explicitly
