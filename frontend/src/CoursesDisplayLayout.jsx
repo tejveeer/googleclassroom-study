@@ -20,7 +20,7 @@ export function CoursesDisplayLayout() {
   });
 
   return <>
-    <div className="p-4 flex flex-col md:flex-row gap-4">
+    <div className="flex flex-col md:flex-row gap-4">
       {courses.map((courseData) => 
         <Course 
           key={courseData.id} 

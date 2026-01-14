@@ -10,18 +10,23 @@ export function HomeLayout() {
     queryKey: ['courses'],
     queryFn: fetchUserCourses,
   });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   console.log(data);
   return (
     <div className="min-h-screen grid grid-rows-[80px_1fr] grid-cols-1 select-none lg:grid-cols-[80px_1fr]">
-      <Header />
-      <Sidebar />
-      {isPending ? <p>Loading...</p> : <Outlet context={toCamel(data)} />}
+      <Header setIsSidebarOpen={setIsSidebarOpen} />
+      <Sidebar isOpen={isSidebarOpen} />
+      {isPending ? <p>Loading...</p> : 
+        <div className="lg:col-start-2 p-4">
+          <Outlet context={toCamel(data)} />
+        </div>
+      }
     </div>
   );
 }
 
-function Header() {
+function Header({ setIsSidebarOpen }) {
   const [isDropdownSelected, setIsDropdownSelected] = useState(false);
   const [isCreateCourseModalSelected, setIsCreateCourseModalSelected] = useState(false);
   const [isJoinCourseModalSelected, setIsJoinCourseModalSelected] = useState(false);
@@ -40,7 +45,11 @@ function Header() {
     <div className="col-span-2 p-4 h-20 flex justify-between items-center bg-gray-100 cursor-default">
       {/* Left side */}
       <div className="flex gap-4 items-center">
-        <div className="hamburger-menu size-10 rounded-lg transition duration-200 ease-in hover:bg-amber-400 cursor-pointer bg-amber-300"></div>
+        <button 
+          className="hamburger-menu size-10 rounded-lg transition duration-200 ease-in hover:bg-amber-400 cursor-pointer bg-amber-300"
+          onClick={() => setIsSidebarOpen(prev => !prev)}
+        >
+        </button>
         <h1 className="text-2xl">Classroom</h1>
       </div>
       {/* Right side */}
@@ -231,11 +240,66 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
   );
 }
 
-function Sidebar() {
+function Sidebar({ isOpen }) {
   return (
-    <div className="hidden gap-2 lg:block bg-gray-200">
-      {/* Sidebar content */}
-    </div>
+    <>
+      {/* Mobile backdrop */}
+      <div
+        className={[
+          "fixed inset-0 bg-black/40 transition-opacity duration-200 lg:hidden",
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none",
+        ].join(" ")}
+      />
+
+      <aside
+        className={[
+          "fixed inset-0 min-h-screen bg-gray-200",
+          "transition-[transform,width] duration-200 ease-in-out",
+
+          // MOBILE: off-canvas slide
+          isOpen ? "translate-x-0" : "-translate-x-full",
+          "w-64", // mobile width when open
+
+          // DESKTOP: always visible; collapse/expand by width
+          "lg:translate-x-0 lg:top-20",
+          isOpen ? "lg:w-64" : "lg:w-20",
+        ].join(" ")}
+      >
+        <SidebarContent expanded={isOpen} />
+      </aside>
+    </>
+  );
+}
+
+function SidebarContent({ expanded }) {
+  return (
+    <nav className="h-full p-2 flex flex-col gap-2">
+      <Item icon="🏠" label="Home" expanded={expanded} />
+      <Item icon="📚" label="Courses" expanded={expanded} />
+      <Item icon="📝" label="Assignments" expanded={expanded} />
+      <div className="flex-1" />
+      <Item icon="⚙️" label="Settings" expanded={expanded} />
+    </nav>
+  );
+}
+
+function Item({ icon, label, expanded }) {
+  return (
+    <button className={`w-full flex items-center ${!expanded ? 'justify-center' : ''} gap-3 p-2 rounded hover:bg-gray-300`}>
+      <span className="w-8 text-center">{icon}</span>
+
+      {/* On desktop, fade label based on expanded */}
+      {expanded && <span
+        className={[
+          "whitespace-nowrap transition-opacity duration-200",
+          expanded ? "lg:opacity-100" : "lg:opacity-0",
+          // On mobile, if sidebar is open, labels should always show
+          "opacity-100",
+        ].join(" ")}
+      >
+        {label}
+      </span>}
+    </button>
   );
 }
 
