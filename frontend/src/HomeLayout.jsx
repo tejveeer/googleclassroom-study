@@ -6,24 +6,27 @@ import { useClickAway } from "react-use";
 import { toCamel } from "./utility";
 
 export function HomeLayout() {
-  const { isPending, isLoading, error, data } = useQuery({
+  const { isSuccess, data } = useQuery({
     queryKey: ['courses'],
     queryFn: fetchUserCourses
   });
-  console.log(isPending, isLoading, error);
+
+  let courses;
+  if (isSuccess) {
+    courses = data.map(it => toCamel(it));
+  }
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   const onClose = () => setIsSidebarOpen(false);
   return (
     <div className="min-h-screen bg-pink-300 flex flex-col select-none">
       <Header setIsSidebarOpen={setIsSidebarOpen} />
       <div className="flex flex-1">
-        <Sidebar isOpen={isSidebarOpen} onClose={onClose} />
+        <Sidebar isOpen={isSidebarOpen} onClose={onClose} courses={courses} />
         <div className="flex-1 bg-gray-100">
-          <div className="bg-white h-full p-6 rounded-tl-4xl">
-            <Outlet context={toCamel(data)} />
-          </div>
+          {courses && <div className="bg-white h-full p-6 rounded-tl-4xl">
+            <Outlet context={courses} />
+          </div>}
         </div>
       </div>
     </div>
@@ -244,7 +247,9 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
   );
 }
 
-function Sidebar({ isOpen, onClose }) {
+function Sidebar({ isOpen, onClose, courses }) {
+  const [showCourses, setShowCourses] = useState(false);
+
   return (
     <>
       {/* Mobile backdrop */}
@@ -278,11 +283,39 @@ function Sidebar({ isOpen, onClose }) {
             ${isOpen ? 'opacity-100' : 'opacity-0 w-0'}
             `
           }>Home</p>
-          
+        </div>
+        <div className="self-stretch">
+          <div 
+            className="flex items-center hover:bg-gray-200 rounded-md transition duration-100 ease-in cursor-pointer"
+            onClick={() => setShowCourses(prev => !prev)}  
+          >
+            <div className="home cursor-pointer size-10 bg-amber-400 hover:bg-amber-500 transition duration-100 ease-in rounded-md shrink-0"></div>
+            <p className={
+              `text-center overflow-hidden transition-opacity duration-200 ease-out ml-5
+              text-xl
+              ${isOpen ? 'opacity-100' : 'opacity-0 w-0'}
+              `
+            }>Teaching</p>
+          </div>
+          {isOpen && showCourses && <div className="mt-2 flex flex-col gap-1">
+            {courses && courses.map(course => <CourseNavButton key={course.id} course={course} />)}
+          </div>}
         </div>
       </aside>
     </>
   );
+}
+
+function CourseNavButton({ course }) {
+  return <>
+    <div className="flex items-center">
+      <div className="size-10 rounded-full bg-purple-400"></div>
+      <div className="ml-5 flex-1 flex flex-col">
+        <p className="text-xl">{course.courseName}</p>
+        <p className="text-xs">{course.courseRoom}</p>
+      </div>
+    </div>
+  </>
 }
 
 async function fetchUserCourses() {
@@ -311,7 +344,7 @@ async function fetchUserCourses() {
 }
 
 async function createCourse(courseData) {
-  const res = await fetch("http://localhost:3000/api/courses/", {
+  const res = await fetch("http://localhost:3000/api/courses/create", {
     credentials: "include",
     method: "POST",
     headers: {
