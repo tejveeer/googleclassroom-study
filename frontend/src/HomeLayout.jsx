@@ -6,22 +6,30 @@ import { useClickAway } from "react-use";
 import { toCamel } from "./utility";
 
 export function HomeLayout() {
-  const { isPending, data } = useQuery({
+  const { isPending, error, data } = useQuery({
     queryKey: ['courses'],
-    queryFn: fetchUserCourses,
+    queryFn: async () => {
+      console.log("Inside queryFN");
+      return fetchUserCourses();
+    },
+    networkMode: "always",
   });
+
+  console.log(isPending, error);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  console.log(data);
+  const onClose = () => setIsSidebarOpen(false);
   return (
-    <div className="min-h-screen grid grid-rows-[80px_1fr] grid-cols-1 select-none lg:grid-cols-[80px_1fr]">
+    <div className="min-h-screen bg-pink-300 flex flex-col select-none">
       <Header setIsSidebarOpen={setIsSidebarOpen} />
-      <Sidebar isOpen={isSidebarOpen} />
-      {isPending ? <p>Loading...</p> : 
-        <div className="lg:col-start-2 p-4">
-          <Outlet context={toCamel(data)} />
+      <div className="flex flex-1">
+        <Sidebar isOpen={isSidebarOpen} onClose={onClose} />
+        <div className="flex-1 bg-gray-100">
+          <div className="bg-white h-full p-6 rounded-tl-4xl">
+            <Outlet context={toCamel(data)} />
+          </div>
         </div>
-      }
+      </div>
     </div>
   );
 }
@@ -42,7 +50,7 @@ function Header({ setIsSidebarOpen }) {
   }
 
   return (
-    <div className="col-span-2 p-4 h-20 flex justify-between items-center bg-gray-100 cursor-default">
+    <div className="col-span-2 p-4 h-16 flex justify-between items-center bg-gray-100 cursor-default">
       {/* Left side */}
       <div className="flex gap-4 items-center">
         <button 
@@ -240,66 +248,35 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
   );
 }
 
-function Sidebar({ isOpen }) {
+function Sidebar({ isOpen, onClose }) {
   return (
     <>
       {/* Mobile backdrop */}
       <div
-        className={[
-          "fixed inset-0 bg-black/40 transition-opacity duration-200 lg:hidden",
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none",
-        ].join(" ")}
+        className={`
+          fixed inset-0 bg-black/40 transition-opacity duration-200 lg:hidden
+          ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}
+        `}
+        onClick={onClose}
       />
 
       <aside
-        className={[
-          "fixed inset-0 min-h-screen bg-gray-200",
-          "transition-[transform,width] duration-200 ease-in-out",
+        className={`
+          fixed z-10 inset-0 min-h-screen bg-gray-100
+          transition-transform duration-200 ease-in-out w-64
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
 
-          // MOBILE: off-canvas slide
-          isOpen ? "translate-x-0" : "-translate-x-full",
-          "w-64", // mobile width when open
+          lg:static lg:translate-x-0 lg:min-h-[calc(100vh-64px)] lg:bg-purple-300 lg:w-18
+          lg:transition-[width]
+          ${isOpen ? 'lg:w-64' : ''}
 
-          // DESKTOP: always visible; collapse/expand by width
-          "lg:translate-x-0 lg:top-20",
-          isOpen ? "lg:w-64" : "lg:w-20",
-        ].join(" ")}
+          flex flex-col gap-4 items-center
+          p-4
+        `}
       >
-        <SidebarContent expanded={isOpen} />
+        <div className="home mt-5 size-10 bg-amber-400 rounded-md"></div>        
       </aside>
     </>
-  );
-}
-
-function SidebarContent({ expanded }) {
-  return (
-    <nav className="h-full p-2 flex flex-col gap-2">
-      <Item icon="🏠" label="Home" expanded={expanded} />
-      <Item icon="📚" label="Courses" expanded={expanded} />
-      <Item icon="📝" label="Assignments" expanded={expanded} />
-      <div className="flex-1" />
-      <Item icon="⚙️" label="Settings" expanded={expanded} />
-    </nav>
-  );
-}
-
-function Item({ icon, label, expanded }) {
-  return (
-    <button className={`w-full flex items-center ${!expanded ? 'justify-center' : ''} gap-3 p-2 rounded hover:bg-gray-300`}>
-      <span className="w-8 text-center">{icon}</span>
-
-      {/* On desktop, fade label based on expanded */}
-      {expanded && <span
-        className={[
-          "whitespace-nowrap transition-opacity duration-200",
-          expanded ? "lg:opacity-100" : "lg:opacity-0",
-          // On mobile, if sidebar is open, labels should always show
-          "opacity-100",
-        ].join(" ")}
-      >
-        {label}
-      </span>}
-    </button>
   );
 }
 
@@ -307,6 +284,8 @@ async function fetchUserCourses() {
   const res = await fetch('http://localhost:3000/api/courses/', {
     credentials: "include"
   });
+
+  console.log("called fetch user courses");
 
   if (!res.ok) {
     let message = "Request failed";

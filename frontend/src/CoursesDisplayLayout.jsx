@@ -45,7 +45,7 @@ function Course({ courseData, deleteCourseMutation }) {
         {courseData.userRole === 'teacher' && 
         <div className="flex flex-row-reverse">
           <div 
-            className="relative delete-course size-4 bg-black"
+            className="relative delete-course size-4 z-0 bg-black"
             onClick={setIsDeleteDropdownSelected}
           >
             {isDeleteDropdownSelected && <DeleteCourseDropdown 
