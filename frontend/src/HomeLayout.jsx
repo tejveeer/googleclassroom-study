@@ -92,14 +92,15 @@ function CourseAddDropdownMenu({ setIsDropdownSelected, onClickCreate, onClickJo
   useClickAway(ref, () => setIsDropdownSelected(false));
 
   return <>
-    <div ref={ref} className="absolute rounded-lg size-32 right-4 top-4 flex flex-col flex-1 gap-1 p-2 bg-gray-300">
+    <div ref={ref} className="absolute rounded-lg right-4 top-4 flex flex-col py-2 flex-1 bg-gray-200 shadow-md">
       <button 
-        className="flex-1 hover:bg-gray-400 cursor-pointer rounded-md transition duration-100 ease-in"
+        className="hover:bg-gray-400 px-2 py-3 text-left cursor-pointer transition duration-100 ease-in"
         onClick={onClickJoinCourse}
-      >Join</button>
+      >Join class</button>
       <button 
-        className="flex-1 hover:bg-gray-400 cursor-pointer rounded-md transition duration-100 ease-in" 
-        onClick={onClickCreate}>Create</button>
+        className="hover:bg-gray-400 px-2 py-3 text-nowrap cursor-pointer transition duration-100 ease-in" 
+        onClick={onClickCreate}
+      >Create class</button>
     </div>
   </>
 }
@@ -157,7 +158,7 @@ function CreateCourseModal({ setIsCreateCourseModalSelected }) {
   return (
     <>
       <div
-        className="fixed top-0 left-0 flex justify-center items-center min-h-screen w-full bg-black/20"
+        className="fixed z-20 top-0 left-0 flex justify-center items-center min-h-screen w-full bg-black/20"
         onClick={() => setIsCreateCourseModalSelected(false)}
       >
         <form
@@ -226,7 +227,7 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
   return (
     <>
       <div
-        className="fixed top-0 left-0 flex justify-center items-center min-h-screen w-full bg-black/20"
+        className="fixed z-20 top-0 left-0 flex justify-center items-center min-h-screen w-full bg-black/20"
         onClick={() => setIsJoinCourseModalSelected(false)}
       >
         <form

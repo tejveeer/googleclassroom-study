@@ -4,6 +4,7 @@ import { HomeLayout } from './HomeLayout'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CoursesDisplayLayout } from './CoursesDisplayLayout';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { Design } from './Design';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +29,7 @@ export function App() {
           <Route path="login" element={<Login />} />
           <Route path="/" element={<HomeLayout />}>
             <Route index element={<CoursesDisplayLayout />} />
+            <Route path="design" element={<Design />} />
           </Route>
         </Routes>
       </BrowserRouter>
