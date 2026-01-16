@@ -3,6 +3,7 @@ import { Login } from './Login'
 import { HomeLayout } from './HomeLayout'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CoursesDisplayLayout } from './CoursesDisplayLayout';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +31,7 @@ export function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <ReactQueryDevtools />
     </QueryClientProvider>
   </>
 }

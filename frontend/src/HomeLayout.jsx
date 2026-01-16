@@ -6,10 +6,11 @@ import { useClickAway } from "react-use";
 import { toCamel } from "./utility";
 
 export function HomeLayout() {
-  const { isPending, error, data } = useQuery({
+  const { isPending, isLoading, error, data } = useQuery({
     queryKey: ['courses'],
     queryFn: fetchUserCourses
   });
+  console.log(isPending, isLoading, error);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -277,6 +278,7 @@ function Sidebar({ isOpen, onClose }) {
             ${isOpen ? 'opacity-100' : 'opacity-0 w-0'}
             `
           }>Home</p>
+          
         </div>
       </aside>
     </>
@@ -287,6 +289,8 @@ async function fetchUserCourses() {
   const res = await fetch('http://localhost:3000/api/courses/', {
     credentials: "include"
   });
+
+  console.log("Request made");
 
   if (!res.ok) {
     let message = "Request failed";

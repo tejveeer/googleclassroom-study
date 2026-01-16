@@ -19,6 +19,9 @@ export function CoursesDisplayLayout() {
     }
   });
 
+  if (!courses) {
+    return <p>No courses available yet...</p>
+  }
   return <>
     <div className="flex flex-col md:flex-row gap-4">
       {courses.map((courseData) => 
