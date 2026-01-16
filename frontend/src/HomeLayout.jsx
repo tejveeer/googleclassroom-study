@@ -8,14 +8,9 @@ import { toCamel } from "./utility";
 export function HomeLayout() {
   const { isPending, error, data } = useQuery({
     queryKey: ['courses'],
-    queryFn: async () => {
-      console.log("Inside queryFN");
-      return fetchUserCourses();
-    },
-    networkMode: "always",
+    queryFn: fetchUserCourses
   });
 
-  console.log(isPending, error);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const onClose = () => setIsSidebarOpen(false);
@@ -274,7 +269,10 @@ function Sidebar({ isOpen, onClose }) {
           p-4
         `}
       >
-        <div className="home mt-5 size-10 bg-amber-400 rounded-md"></div>        
+        <div className="mt-5 self-stretch flex items-center gap-2">
+          <div className="home size-10 bg-amber-400 rounded-md"></div>
+          <p className="text-center self-stretch">Home</p>
+        </div>
       </aside>
     </>
   );
@@ -284,8 +282,6 @@ async function fetchUserCourses() {
   const res = await fetch('http://localhost:3000/api/courses/', {
     credentials: "include"
   });
-
-  console.log("called fetch user courses");
 
   if (!res.ok) {
     let message = "Request failed";
