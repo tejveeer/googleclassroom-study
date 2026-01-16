@@ -261,7 +261,7 @@ function Sidebar({ isOpen, onClose }) {
           transition-transform duration-200 ease-in-out w-64
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
 
-          lg:static lg:translate-x-0 lg:min-h-[calc(100vh-64px)] lg:bg-purple-300 lg:w-18
+          lg:static lg:translate-x-0 lg:min-h-[calc(100vh-64px)] lg:bg-gray-100 lg:w-18
           lg:transition-[width]
           ${isOpen ? 'lg:w-64' : ''}
 
@@ -269,9 +269,14 @@ function Sidebar({ isOpen, onClose }) {
           p-4
         `}
       >
-        <div className="mt-5 self-stretch flex items-center gap-2">
-          <div className="home size-10 bg-amber-400 rounded-md"></div>
-          <p className="text-center self-stretch">Home</p>
+        <div className="mt-5 self-stretch flex items-center">
+          <div className="home size-10 bg-amber-400 rounded-md shrink-0"></div>
+          <p className={
+            `text-center overflow-hidden transition-opacity duration-200 ease-out ml-5
+            text-xl
+            ${isOpen ? 'opacity-100' : 'opacity-0 w-0'}
+            `
+          }>Home</p>
         </div>
       </aside>
     </>
