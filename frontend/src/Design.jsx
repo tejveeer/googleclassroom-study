@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useClickAway } from "react-use";
 
 export function Design() {
   return <>
-    <Input placeholder={"Input"} />
+    <Input placeholder={"Test"} />
   </>;
 }
 
@@ -16,26 +17,44 @@ export function Design() {
 //    - onclick: placeholder -> below border, border bottom gets highlighted, placeholder 
 //                + bottom border are blue
 export function Input({ placeholder, error, isRequired = false }) {
-  const [isInputClicked, setIsInputClicked] = useState(false);
-  const onClickInput = () => setIsInputClicked(prev => !prev);
+  const [isFocused, setIsFocused] = useState(false);
+  const [value, setValue] = useState("");
+  const inputRef = useRef(null);
+
+  const shouldFloat = isFocused || value !== "";
+
+  const onClickContainer = () => {
+    inputRef.current?.focus();
+  };
 
   return <>
-    <div className={
-      tw("group relative w-30 p-3 flex outline hover:outline-2 cursor-text hover:border-gray-600", 
-      )
-    }>
-      {/* Placeholder */}
+    <div 
+      onClick={onClickContainer}
+      className={
+        tw("group rounded-sm relative w-40 px-3 py-2 flex outline hover:outline-2 cursor-text border-gray-500 hover:outline-blue-600")
+      }
+    >
       <label className={
-        tw("absolute top-2.5 cursor-text text-xl",
-          isInputClicked && '-translate-y-6.5 scale-90 bg-white',
-          "bg-transparent px-1",
-          "transition-transform transition-colors duration-100 ease-out"
+        tw("absolute top-2 left-1.5 cursor-text text-md text-gray-500",
+          shouldFloat && '-translate-y-5.5 scale-80 bg-white',
+          "bg-white px-1",
+          "transition-transform transition-colors duration-75 ease-out",
+          "group-hover:text-blue-500"
         )
       }>{placeholder}</label>
-      <input type="text" onClick={onClickInput} className="w-full appearance-none outline-none" />
+      <input 
+        ref={inputRef}
+        type="text" 
+        value={value}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        onChange={(e) => setValue(e.target.value)} 
+        className="w-full appearance-none text-gray-500 outline-none caret-blue-700" 
+      />
     </div>
   </>
 }
+
 
 function tw(...args) {
   return args.filter(Boolean).join(' ')
