@@ -10,3 +10,8 @@ export function toCamel(obj) {
   }
   return obj;
 }
+
+
+export function tw(...args) {
+  return args.filter(Boolean).join(' ')
+}

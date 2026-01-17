@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { Outlet } from "react-router";
 import { useClickAway } from "react-use";
 import { toCamel } from "./utility";
+import { Input } from "./design-system/Input";
 
 export function HomeLayout() {
   const { isSuccess, data } = useQuery({
@@ -232,12 +233,18 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
       >
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-72 h-72 bg-gray-400 rounded-2xl flex flex-col"
+          className="p-6 bg-gray-200 rounded-2xl flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
           <div>
             <h1>Course Code</h1>
-            <input {...register("joinId", joinCourseFormRules.joinId)} />
+            <Input 
+              type="primary"
+              placeholder="Enter course name"
+              error={errors.courseName}
+              labelBg="bg-gray-200"
+              {...register("courseName", courseFormRules.courseName)} 
+            />
             {errors.joinId && <p>{errors.joinId.message}</p>}
           </div>
           <input type="submit" value="Submit" />
