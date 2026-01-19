@@ -5,7 +5,7 @@ import { Outlet } from "react-router";
 import { useClickAway } from "react-use";
 import { toCamel, tw } from "./utility";
 import { Input } from "./design-system/Input";
-import { ChevronUp, Home, UserPen } from "lucide-react";
+import { ChevronUp, Home, Menu, Plus, UserPen } from "lucide-react";
 
 export function HomeLayout() {
   const { isSuccess, data } = useQuery({
@@ -54,23 +54,23 @@ function Header({ setIsSidebarOpen }) {
     <div className="col-span-2 p-4 h-16 flex justify-between items-center bg-gray-100 cursor-default">
       {/* Left side */}
       <div className="flex gap-4 items-center">
-        <button 
-          className="hamburger-menu size-10 rounded-lg transition duration-200 ease-in hover:bg-amber-400 cursor-pointer bg-amber-300"
+        <div 
+          className="size-10 flex justify-center items-center hover:bg-gray-200 cursor-pointer transition duration-75 ease-in rounded-full"
           onClick={() => setIsSidebarOpen(prev => !prev)}
         >
-        </button>
-        <h1 className="text-2xl">Classroom</h1>
+          <Menu className="size-8" />
+        </div>
+        <img src="/googleclassroom.png" alt="Google Classroom Logo" className="size-10" />
+        <h1 className="-ml-1 text-2xl text-gray-700">Classroom</h1>
       </div>
       {/* Right side */}
       <div className="flex gap-4 items-center">
-        <div className="add-button relative">
-          <button
-            className="
-              text-3xl bg-gray-300 px-2 rounded-md 
-              cursor-pointer hover:bg-gray-400 transition 
-              duration-200 ease-in"
+        {/* Add Button */}
+        <div className="relative">
+          <Plus 
+            className="size-10 p-1 rounded-full hover:bg-gray-200 cursor-pointer transition duration-150 ease-in"
             onClick={() => setIsDropdownSelected(prev => !prev)}
-          >+</button>
+          />
           {isDropdownSelected && <CourseAddDropdownMenu 
             setIsDropdownSelected={setIsDropdownSelected}
             onClickCreate={onClickCreate}
@@ -94,6 +94,7 @@ function CourseAddDropdownMenu({ setIsDropdownSelected, onClickCreate, onClickJo
   useClickAway(ref, () => setIsDropdownSelected(false));
 
   return <>
+    {/* TODO: FIX THIS, clicking button + useClickAway conflict! */}
     <div ref={ref} className="absolute rounded-lg right-4 top-4 flex flex-col py-2 flex-1 bg-gray-200 shadow-md">
       <button 
         className="hover:bg-gray-400 px-2 py-3 text-left cursor-pointer transition duration-100 ease-in"
@@ -315,6 +316,7 @@ function Sidebar({ isOpen, onClose, courses }) {
           p-4
         `}
       >
+        {/* Home */}
         <div className="mt-5 cursor-pointer hover:bg-gray-200 transition duration-200 ease-in p-1 rounded-md self-stretch flex items-center">
           <div className="size-8 shrink-0 flex justify-center items-center">
             <Home className="flex flex-col size-8" />
@@ -326,12 +328,13 @@ function Sidebar({ isOpen, onClose, courses }) {
             `
           }>Home</p>
         </div>
+        {/* Teaching */}
         <div className="self-stretch">
           <div 
-            className="flex items-center hover:bg-gray-200 rounded-md transition duration-200 ease-in cursor-pointer"
+            className="flex items-center hover:bg-gray-200 rounded-md transition duration-200 ease-in cursor-pointer p-1"
             onClick={onClickTeaching}
           >
-            <div className="size-10 flex justify-center items-center shrink-0">
+            <div className="size-8 flex justify-center items-center shrink-0">
               <UserPen className="size-8" />
             </div>
             <p className={
@@ -359,10 +362,10 @@ function Sidebar({ isOpen, onClose, courses }) {
 
 function CourseNavButton({ course }) {
   return <>
-    <div className="flex items-center">
-      <div className="size-10 rounded-full bg-purple-400"></div>
-      <div className="ml-5 flex-1 flex flex-col">
-        <p className="text-xl">{course.courseName}</p>
+    <div className="flex items-center cursor-pointer hover:bg-green-100 transition duration-150 ease-in rounded-full p-1">
+      <div className="size-8 rounded-full bg-green-400 flex items-center justify-center text-xl text-green-700">{course.courseName[0]}</div>
+      <div className="ml-4 flex-1 flex flex-col">
+        <p className="text-lg">{course.courseName}</p>
         <p className="text-xs">{course.courseRoom}</p>
       </div>
     </div>
