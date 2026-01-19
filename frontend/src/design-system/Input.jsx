@@ -41,7 +41,6 @@ const InputPrimary = forwardRef(({
   const hasValue = props.value !== undefined ? props.value !== "" : internalRef.current?.value !== "";
   const shouldFloat = isFocused || hasValue;
 
-  console.log(props);
   return (
     <div 
       onClick={() => internalRef.current?.focus()}
@@ -99,21 +98,21 @@ const InputSecondary = forwardRef(({
       onClick={() => internalRef.current?.focus()}
       className={tw(
         "group rounded-t-sm relative w-full px-3 pb-2 pt-4.5 flex cursor-text bg-gray-100",
-        "border-b transition-colors duration-150", // Remove transition-all, target colors
+        "border-b-2 transition-colors duration-150",
         isFocused 
-          ? "border-blue-600 border-b-2" // Border-width change is now instant
+          ? "border-blue-600 border-b-2" 
           : "border-gray-400 hover:border-blue-500",
-        error ? "border-red-500" : ""
+        error ? "border-red-500 hover:border-red-600" : ""
       )}
     >
       <label className={tw(
-        "absolute left-2 cursor-text text-md pointer-events-none",
-        "transition-all duration-150 ease-out", // Keep smooth transition only for the label
+        "absolute left-2 top-4 cursor-text text-md pointer-events-none",
+        "transition-all duration-150 ease-out",
         shouldFloat 
           ? "-translate-y-4.5 -translate-x-1.5 scale-80" 
           : "translate-y-0 scale-100",
         isFocused ? "text-blue-600" : "text-gray-500 group-hover:text-blue-500",
-        error ? "text-red-500" : ""
+        error ? "text-red-500 group-hover:text-red-600" : ""
       )}>
         {placeholder}{isRequired && "*"}
       </label>
@@ -128,7 +127,7 @@ const InputSecondary = forwardRef(({
           setIsFocused(false);
           onBlur?.(e);
         }}
-        className="w-full appearance-none text-gray-700 outline-none caret-blue-700 bg-transparent"
+        className={tw("w-full appearance-none text-gray-700 outline-none bg-transparent", error ? "caret-red-700" : "caret-blue-700")}
       />
     </div>
   );

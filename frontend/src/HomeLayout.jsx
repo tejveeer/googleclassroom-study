@@ -141,7 +141,7 @@ function CreateCourseModal({ setIsCreateCourseModalSelected }) {
     handleSubmit,
     formState: { errors },
     setError
-  } = useForm({ mode: "onSubmit" });
+  } = useForm({ mode: "onChange" });
 
   const queryClient = useQueryClient();
   const createCourseMutation = useMutation({
@@ -164,29 +164,42 @@ function CreateCourseModal({ setIsCreateCourseModalSelected }) {
       >
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-72 h-72 bg-gray-400 rounded-2xl flex flex-col"
+          className="bg-gray-200 w-86 p-6 shadow-lg rounded-2xl flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
-          <div>
-            <h1>Course Name</h1>
-            <input {...register("courseName", courseFormRules.courseName)} />
-            {errors.courseName && <p>{errors.courseName.message}</p>}
-          </div>
+          <h1 className="text-xl mb-4">Create Class</h1>
+          <Input 
+            type="secondary" 
+            placeholder="Couse Name"
+            error={errors.courseName} 
+            {...register("courseName", courseFormRules.courseName)}
+          />
+          <p className="h-4 text-sm text-gray-500 mb-2">{errors.courseName && errors.courseName.message}</p>
 
-          <div>
-            <h1>Course Room</h1>
-            <input {...register("courseRoom", courseFormRules.courseRoom)} />
-            {errors.courseRoom && <p>{errors.courseRoom.message}</p>}
-          </div>
+          <Input 
+            type="secondary" 
+            placeholder="Course Room"
+            error={errors.courseRoom} 
+            {...register("courseRoom", courseFormRules.courseRoom)}
+          />
+          <p className="h-4 text-sm text-gray-500 mb-2">{errors.courseRoom && errors.courseRoom.message}</p>
 
-          <div>
-            <h1>Banner color</h1>
-            <input {...register("bannerColor", courseFormRules.bannerColor)} />
-            {errors.bannerColor && <p>{errors.bannerColor.message}</p>}
-          </div>
+          <Input 
+            type="secondary" 
+            placeholder="Banner Color"
+            error={errors.bannerColor} 
+            {...register("bannerColor", courseFormRules.bannerColor)}
+          />
+          <p className="h-4 text-sm text-gray-500">{errors.bannerColor && errors.bannerColor.message}</p>
 
-          <input type="submit" value="Submit" />
-          <p>{errors.root && errors.root.message}</p>
+          <p className="h-4 text-sm text-gray-500">{errors.root && errors.root.message}</p>
+          <input 
+            className="
+              text-md self-end text-blue-700 
+              cursor-pointer hover:text-blue-800 
+              transition duration-75 ease-in 
+              hover:bg-blue-200 p-2 rounded-full" 
+            type="submit" value="Submit" />
         </form>
       </div>
     </>
@@ -209,7 +222,8 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
     register,
     handleSubmit,
     formState: { errors },
-    setError
+    setError,
+    clearErrors
   } = useForm({ 
     mode: "onChange",
   });
@@ -227,12 +241,13 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
   })
   const onSubmit = (data) => {
     joinCourseMutation.mutate({ ...data, role: 'student' });
+    console.log("onSubmit: ", data);
   };
 
   return (
     <>
       <div
-        className="fixed z-20 top-0 left-0 flex justify-center items-center min-h-screen w-full bg-black/20"
+        className="fixed top-0 left-0 flex justify-center items-center min-h-screen w-full bg-black/20"
         onClick={() => setIsJoinCourseModalSelected(false)}
       >
         <form
@@ -246,17 +261,18 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
             <Input 
               type="primary"
               placeholder="Course Code"
-              error={errors.courseCode}
+              error={errors.joinId}
               labelBg="bg-gray-200"
-              {...register("courseCode", {
+              {...register("joinId", {
                 ...joinCourseFormRules.joinId,
+                onChange: () => {
+                  clearErrors("root");
+                }
               })} 
             />
-            <div className="h-3">
-              <p className="text-sm text-gray-500">
-                {errors.root?.message || errors.courseCode?.message}
-              </p>
-            </div>
+            <p className="h-3 text-sm text-gray-500">
+              {errors.root?.message || errors.joinId?.message}
+            </p>
           </div>
           <input
             className="text-md self-end text-blue-700 cursor-pointer hover:text-blue-800 transition duration-75 ease-in hover:bg-blue-200 p-2 rounded-full" type="submit" value="Submit" />
