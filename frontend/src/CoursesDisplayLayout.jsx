@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { MoreVertical } from "lucide-react";
 import { useRef, useState } from "react";
 import { useOutletContext } from "react-router";
 import { useClickAway } from "react-use";
@@ -23,7 +24,7 @@ export function CoursesDisplayLayout() {
     return <p>No courses available yet...</p>
   }
   return <>
-    <div className="flex flex-col md:flex-row gap-4">
+    <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
       {courses.map((courseData) => 
         <Course 
           key={courseData.id} 
@@ -38,38 +39,56 @@ function Course({ courseData, deleteCourseMutation }) {
   const [isDeleteDropdownSelected, setIsDeleteDropdownSelected] = useState(false);
   const onClickDelete = () => deleteCourseMutation.mutate({ courseId: courseData.id });
 
+  const [isKebabMenuClicked, setIsKebabMenuClicked] = useState(false);
+
+  const onClickKebab = () => {
+    setIsDeleteDropdownSelected(true);
+    setIsKebabMenuClicked(prev => !prev);
+  }
+
   return <>
-    <article className="size-30 p-2 border border-black flex flex-col">
-      <header>
-        <h1>{courseData.courseName}</h1>
-        <p>{courseData.courseRoom}</p>
-      </header>
-      <footer className="flex-1 flex flex-col-reverse">
-        {courseData.userRole === 'teacher' && 
-        <div className="flex flex-row-reverse">
-          <div 
-            className="relative delete-course size-4 z-0 bg-black"
-            onClick={setIsDeleteDropdownSelected}
-          >
-            {isDeleteDropdownSelected && <DeleteCourseDropdown 
-              setIsDropdownSelected={setIsDeleteDropdownSelected}
-              onClickDelete={onClickDelete}
-            />}
-          </div>
-        </div>}
-      </footer>
-    </article>
+    <div className="relative"> {/* Add wrapper */}
+      <article className="size-66 cursor-pointer hover:shadow-md shadow-gray-200 transition duration-200 ease-in border overflow-hidden border-gray-300 rounded-xl flex flex-col">
+        <header className="bg-green-400 p-4">
+          <h1 className="text-2xl text-white">{courseData.courseName}</h1>
+          <p>{courseData.courseRoom}</p>
+        </header>
+        <footer className="flex-1 flex flex-col-reverse">
+          {courseData.userRole === 'teacher' 
+            &&
+            <div className="flex flex-row-reverse border-t border-gray-300 p-2">
+              <MoreVertical onClick={onClickKebab} className="rounded-full size-7 p-1 hover:bg-gray-200 transition duration-200 ease-in" />
+            </div>
+          }
+        </footer>
+      </article>
+      {isDeleteDropdownSelected && <DeleteCourseDropdown 
+        setIsDeleteDropdownSelected={setIsDeleteDropdownSelected}
+        onClickDelete={onClickDelete}
+        isKebabMenuClicked={isKebabMenuClicked}
+        setIsKebabMenuClicked={setIsKebabMenuClicked}
+      />}
+    </div>
   </>;
 }
 
-function DeleteCourseDropdown({ setIsDeleteDropdownSelected, onClickDelete }) {
+function DeleteCourseDropdown({ 
+  setIsDeleteDropdownSelected, 
+  isKebabMenuClicked, 
+  setIsKebabMenuClicked, 
+  onClickDelete 
+}) {
   const ref = useRef(null);
-  useClickAway(ref, () => setIsDeleteDropdownSelected(false));
+  useClickAway(ref, () => {
+    if (!isKebabMenuClicked) {
+      setIsDeleteDropdownSelected(false);
+    }
+  });
 
   return <>
-    <div ref={ref} className="absolute rounded-lg size-32 right-4 top-4 flex flex-col flex-1 gap-1 p-2 bg-gray-300">
+    <div ref={ref} className="absolute left-56 -bottom-12 z-10 rounded-lg flex flex-col py-2 flex-1 bg-gray-200 shadow-md">
       <button 
-        className="flex-1 hover:bg-gray-400 cursor-pointer rounded-md transition duration-100 ease-in"
+        className="hover:bg-gray-400 px-2 py-3 text-left cursor-pointer transition duration-100 ease-in"
         onClick={onClickDelete}
       >Delete</button>
     </div>

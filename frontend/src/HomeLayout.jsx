@@ -241,13 +241,12 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
   })
   const onSubmit = (data) => {
     joinCourseMutation.mutate({ ...data, role: 'student' });
-    console.log("onSubmit: ", data);
   };
 
   return (
     <>
       <div
-        className="fixed top-0 left-0 flex justify-center items-center min-h-screen w-full bg-black/20"
+        className="fixed z-20 top-0 left-0 flex justify-center items-center min-h-screen w-full bg-black/20"
         onClick={() => setIsJoinCourseModalSelected(false)}
       >
         <form
