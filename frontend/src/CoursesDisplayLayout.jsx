@@ -12,7 +12,6 @@ export function CoursesDisplayLayout() {
   const deleteCourseMutation = useMutation({
     mutationFn: deleteCourse,
     onSuccess: () => {
-      console.log("Triggered on success");
       queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
     onError: (error) => {
@@ -36,63 +35,83 @@ export function CoursesDisplayLayout() {
 }
 
 function Course({ courseData, deleteCourseMutation }) {
-  const [isDeleteDropdownSelected, setIsDeleteDropdownSelected] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const dropdownRef = useRef(null);
+  const kebabRef = useRef(null);
+
   const onClickDelete = () => deleteCourseMutation.mutate({ courseId: courseData.id });
 
-  const [isKebabMenuClicked, setIsKebabMenuClicked] = useState(false);
+  // Close only when click is outside BOTH the dropdown and the kebab button
+  useClickAway(dropdownRef, (event) => {
+    const target = event.target;
 
-  const onClickKebab = () => {
-    setIsDeleteDropdownSelected(true);
-    setIsKebabMenuClicked(prev => !prev);
-  }
+    // If the click happened on the kebab button (or inside it), ignore.
+    if (kebabRef.current && kebabRef.current.contains(target)) return;
 
-  return <>
-    <div className="relative"> {/* Add wrapper */}
+    setIsDropdownOpen(false);
+  });
+
+  const onClickKebab = (e) => {
+    e.stopPropagation(); // prevents weird parent click handlers
+    setIsDropdownOpen((prev) => !prev);
+  };
+
+  return (
+    <div className="relative">
       <article className="size-66 cursor-pointer hover:shadow-md shadow-gray-200 transition duration-200 ease-in border overflow-hidden border-gray-300 rounded-xl flex flex-col">
         <header className="bg-green-400 p-4">
           <h1 className="text-2xl text-white">{courseData.courseName}</h1>
           <p>{courseData.courseRoom}</p>
         </header>
+
         <footer className="flex-1 flex flex-col-reverse">
-          {courseData.userRole === 'teacher' 
-            &&
+          {courseData.userRole === "teacher" && (
             <div className="flex flex-row-reverse border-t border-gray-300 p-2">
-              <MoreVertical onClick={onClickKebab} className="rounded-full size-7 p-1 hover:bg-gray-200 transition duration-200 ease-in" />
+              <button
+                ref={kebabRef}
+                type="button"
+                onClick={onClickKebab}
+                className="cursor-pointer rounded-full hover:bg-gray-200 transition duration-200 ease-in"
+                aria-haspopup="menu"
+                aria-expanded={isDropdownOpen}
+              >
+                <MoreVertical className="size-7 p-1" />
+              </button>
             </div>
-          }
+          )}
         </footer>
       </article>
-      {isDeleteDropdownSelected && <DeleteCourseDropdown 
-        setIsDeleteDropdownSelected={setIsDeleteDropdownSelected}
-        onClickDelete={onClickDelete}
-        isKebabMenuClicked={isKebabMenuClicked}
-        setIsKebabMenuClicked={setIsKebabMenuClicked}
-      />}
+
+      {isDropdownOpen && (
+        <DeleteCourseDropdown
+          dropdownRef={dropdownRef}
+          onClickDelete={onClickDelete}
+          onClose={() => setIsDropdownOpen(false)}
+        />
+      )}
     </div>
-  </>;
+  );
 }
 
-function DeleteCourseDropdown({ 
-  setIsDeleteDropdownSelected, 
-  isKebabMenuClicked, 
-  setIsKebabMenuClicked, 
-  onClickDelete 
-}) {
-  const ref = useRef(null);
-  useClickAway(ref, () => {
-    if (!isKebabMenuClicked) {
-      setIsDeleteDropdownSelected(false);
-    }
-  });
-
-  return <>
-    <div ref={ref} className="absolute left-56 -bottom-12 z-10 rounded-lg flex flex-col py-2 flex-1 bg-gray-200 shadow-md">
-      <button 
+function DeleteCourseDropdown({ dropdownRef, onClickDelete, onClose }) {
+  return (
+    <div
+      ref={dropdownRef}
+      className="absolute left-56 -bottom-12 z-10 rounded-lg flex flex-col py-2 bg-gray-200 shadow-md"
+      onClick={(e) => e.stopPropagation()} // clicking inside shouldn't trigger outside handlers
+    >
+      <button
         className="hover:bg-gray-400 px-2 py-3 text-left cursor-pointer transition duration-100 ease-in"
-        onClick={onClickDelete}
-      >Delete</button>
+        onClick={() => {
+          onClickDelete();
+          onClose(); // optional: close menu after delete click
+        }}
+      >
+        Delete
+      </button>
     </div>
-  </>
+  );
 }
 
 async function deleteCourse({ courseId }) {

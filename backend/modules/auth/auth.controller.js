@@ -41,7 +41,7 @@ export function createAuthController({ pool }) {
       const token = jwt.sign(
         { userId: user.id },
         process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "10h" }
       );
 
       res.cookie("access_token", token, {
@@ -50,7 +50,7 @@ export function createAuthController({ pool }) {
         sameSite: "lax",
         path: "/"
       })
-      res.redirect('http://localhost:5173/home');
+      res.redirect('http://localhost:5173/');
     },
   };
 }

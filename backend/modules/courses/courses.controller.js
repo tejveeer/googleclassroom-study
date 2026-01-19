@@ -45,22 +45,22 @@ export function createCoursesController({ coursesService }) {
       const { userId, joinId, role } = req.body;
 
       if (!userId || !joinId || !role) {
-        return res.status(400).json({ error: "userId, joinId, and role are required" });
+        return res.status(400).json({ error: "Missing required information" });
       }
 
       const allowedRoles = new Set(["student", "teacher"]);
       if (!allowedRoles.has(role)) {
-        return res.status(400).json({ error: "role must be 'student' or 'teacher'" });
+        return res.status(400).json({ error: "Access unauthorized" });
       }
 
       const result = await coursesService.joinCourse(userId, joinId, role);
 
       if (!result.success) {
         if (result.reason === "NOT_FOUND") {
-          return res.status(404).json({ error: "Invalid join code (joinId)" });
+          return res.status(404).json({ error: "Invalid join code" });
         }
         if (result.reason === "JOIN_FAILED") {
-          return res.status(400).json({ error: "Could not join course" });
+          return res.status(400).json({ error: "Failed to join course" });
         }
         return res.status(500).json({ error: "Failed to join course" });
       }
@@ -69,8 +69,10 @@ export function createCoursesController({ coursesService }) {
     },
 
     async delete(req, res) {
-      const courseId = req.params.courseId ?? req.body.courseId;
+      const courseId = req.params.id;
       const { userId } = req.body;
+
+      console.log(courseId, userId);
 
       if (!userId || !courseId) {
         return res.status(400).json({ error: "userId and courseId are required" });

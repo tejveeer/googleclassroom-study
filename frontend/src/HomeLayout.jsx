@@ -289,7 +289,7 @@ function Sidebar({ isOpen, onClose, courses }) {
       {/* Mobile backdrop */}
       <div
         className={`
-          fixed inset-0 bg-black/40 transition-opacity duration-200 lg:hidden
+          fixed z-10 inset-0 bg-black/40 transition-opacity duration-200 lg:hidden
           ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}
         `}
         onClick={onClose}
