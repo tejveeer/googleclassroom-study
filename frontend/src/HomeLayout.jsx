@@ -210,7 +210,9 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
     handleSubmit,
     formState: { errors },
     setError
-  } = useForm({ mode: "onSubmit" });
+  } = useForm({ 
+    mode: "onChange",
+  });
 
   const queryClient = useQueryClient();
   const joinCourseMutation = useMutation({
@@ -223,7 +225,9 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
       setError("root", { type: "server", message: err.message });
     },
   })
-  const onSubmit = (data) => joinCourseMutation.mutate({ ...data, role: 'student' });
+  const onSubmit = (data) => {
+    joinCourseMutation.mutate({ ...data, role: 'student' });
+  };
 
   return (
     <>
@@ -233,22 +237,29 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
       >
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="p-6 bg-gray-200 rounded-2xl flex flex-col"
+          className="p-6 bg-gray-200 shadow-lg rounded-2xl flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
-          <div>
-            <h1>Course Code</h1>
+          <div className="mb-4">
+            <h1 className="text-lg">Course Code</h1>
+            <p className="-mt-1 text-md text-gray-500 mb-4">Ask your teacher for the class code, then enter it here</p>
             <Input 
               type="primary"
-              placeholder="Enter course name"
-              error={errors.courseName}
+              placeholder="Course Code"
+              error={errors.courseCode}
               labelBg="bg-gray-200"
-              {...register("courseName", courseFormRules.courseName)} 
+              {...register("courseCode", {
+                ...joinCourseFormRules.joinId,
+              })} 
             />
-            {errors.joinId && <p>{errors.joinId.message}</p>}
+            <div className="h-3">
+              <p className="text-sm text-gray-500">
+                {errors.root?.message || errors.courseCode?.message}
+              </p>
+            </div>
           </div>
-          <input type="submit" value="Submit" />
-          <p>{errors.root && errors.root.message}</p>
+          <input
+            className="text-md self-end text-blue-700 cursor-pointer hover:text-blue-800 transition duration-75 ease-in hover:bg-blue-200 p-2 rounded-full" type="submit" value="Submit" />
         </form>
       </div>
     </>

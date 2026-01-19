@@ -41,6 +41,7 @@ const InputPrimary = forwardRef(({
   const hasValue = props.value !== undefined ? props.value !== "" : internalRef.current?.value !== "";
   const shouldFloat = isFocused || hasValue;
 
+  console.log(props);
   return (
     <div 
       onClick={() => internalRef.current?.focus()}
@@ -48,9 +49,9 @@ const InputPrimary = forwardRef(({
         "group rounded-sm relative w-full px-3 py-2 flex cursor-text", // Removed transition-all from here
         "border transition-colors duration-150", // Only animate colors
         isFocused 
-          ? "border-blue-600 ring-1 ring-blue-600"
+          ? !error ? "border-blue-600 ring-1 ring-blue-600" : ""
           : "border-gray-500 hover:border-blue-600",
-        error ? "border-red-500" : ""
+        error ? "border-red-500 hover:border-red-600" : ""
       )}
     >
       <label className={tw(
@@ -58,7 +59,7 @@ const InputPrimary = forwardRef(({
         "transition-all duration-150 ease-out", // Keep transition on the label only
         shouldFloat ? "top-0 -translate-y-3.5 -translate-x-2 scale-80" : "top-2 scale-100",
         isFocused ? "text-blue-600" : "text-gray-500 group-hover:text-blue-500",
-        error ? "text-red-500" : ""
+        error ? "text-red-500 group-hover:text-red-600" : ""
       )}>
         {placeholder}{isRequired && "*"}
       </label>
@@ -73,7 +74,7 @@ const InputPrimary = forwardRef(({
           setIsFocused(false);
           onBlur?.(e);
         }}
-        className="w-full appearance-none text-gray-700 outline-none caret-blue-700 bg-transparent"
+        className={tw("w-full appearance-none text-gray-700 outline-none bg-transparent", error ? "caret-red-700" : "caret-blue-700")}
       />
     </div>
   );
