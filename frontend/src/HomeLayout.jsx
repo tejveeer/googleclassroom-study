@@ -3,8 +3,9 @@ import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Outlet } from "react-router";
 import { useClickAway } from "react-use";
-import { toCamel } from "./utility";
+import { toCamel, tw } from "./utility";
 import { Input } from "./design-system/Input";
+import { ChevronUp, Home, UserPen } from "lucide-react";
 
 export function HomeLayout() {
   const { isSuccess, data } = useQuery({
@@ -283,7 +284,12 @@ function JoinCourseModal({ setIsJoinCourseModalSelected }) {
 
 function Sidebar({ isOpen, onClose, courses }) {
   const [showCourses, setShowCourses] = useState(false);
+  const [teachingClicked, setTeachingClicked] = useState(false);
 
+  const onClickTeaching = () => {
+    setShowCourses(prev => !prev);
+    setTeachingClicked(prev => !prev);
+  }
   return (
     <>
       {/* Mobile backdrop */}
@@ -309,10 +315,12 @@ function Sidebar({ isOpen, onClose, courses }) {
           p-4
         `}
       >
-        <div className="mt-5 self-stretch flex items-center">
-          <div className="home size-10 bg-amber-400 rounded-md shrink-0"></div>
+        <div className="mt-5 cursor-pointer hover:bg-gray-200 transition duration-200 ease-in p-1 rounded-md self-stretch flex items-center">
+          <div className="size-8 shrink-0 flex justify-center items-center">
+            <Home className="flex flex-col size-8" />
+          </div>
           <p className={
-            `text-center overflow-hidden transition-opacity duration-200 ease-out ml-5
+            `text-center overflow-hidden transition-opacity duration-200 ease-out ml-4
             text-xl
             ${isOpen ? 'opacity-100' : 'opacity-0 w-0'}
             `
@@ -320,16 +328,25 @@ function Sidebar({ isOpen, onClose, courses }) {
         </div>
         <div className="self-stretch">
           <div 
-            className="flex items-center hover:bg-gray-200 rounded-md transition duration-100 ease-in cursor-pointer"
-            onClick={() => setShowCourses(prev => !prev)}  
+            className="flex items-center hover:bg-gray-200 rounded-md transition duration-200 ease-in cursor-pointer"
+            onClick={onClickTeaching}
           >
-            <div className="home cursor-pointer size-10 bg-amber-400 hover:bg-amber-500 transition duration-100 ease-in rounded-md shrink-0"></div>
+            <div className="size-10 flex justify-center items-center shrink-0">
+              <UserPen className="size-8" />
+            </div>
             <p className={
-              `text-center overflow-hidden transition-opacity duration-200 ease-out ml-5
+              `flex-1 text-left overflow-hidden transition-opacity duration-200 ease-out ml-4
               text-xl
               ${isOpen ? 'opacity-100' : 'opacity-0 w-0'}
               `
             }>Teaching</p>
+            <div className={tw(
+                "size-10 flex justify-center items-center transition duration-150 ease-in", 
+                teachingClicked ? "rotate-180" : "",
+                isOpen ? 'opacity-100' : 'opacity-0 w-0'
+              )}>
+              <ChevronUp className="size-8" />
+            </div>
           </div>
           {isOpen && showCourses && <div className="mt-2 flex flex-col gap-1">
             {courses && courses.map(course => <CourseNavButton key={course.id} course={course} />)}
@@ -356,6 +373,7 @@ async function fetchUserCourses() {
   const res = await fetch('http://localhost:3000/api/courses/', {
     credentials: "include"
   });
+
 
   console.log("Request made");
 
