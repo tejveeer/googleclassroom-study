@@ -10,6 +10,8 @@ export function Sidebar({ isOpen, onClose, courses }) {
     setShowCourses(prev => !prev);
     setTeachingClicked(prev => !prev);
   }
+
+  console.log(courses);
   return (
     <>
       {/* Mobile backdrop */}
@@ -71,7 +73,9 @@ export function Sidebar({ isOpen, onClose, courses }) {
             </div>
           </div>
           {isOpen && showCourses && <div className="mt-2 flex flex-col gap-1">
-            {courses && courses.map(course => <CourseNavButton key={course.id} course={course} />)}
+            {courses 
+              && courses.map(
+                  course => course.userRole === "teacher" ? <CourseNavButton key={course.id} course={course} /> : null)}
           </div>}
         </div>
       </aside>

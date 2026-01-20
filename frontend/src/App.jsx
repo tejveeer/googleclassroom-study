@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router'
-import { Login } from './pages/login'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { CoursesDisplayLayout } from './CoursesDisplayLayout';
+import { CoursesDisplayLayout } from './pages/home/pages/courses';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { Design } from './Design';
+
+import { Login } from './pages/login'
+import { Design } from './pages/design';
 import { HomeLayout } from './pages/home';
 
 const queryClient = new QueryClient({
@@ -26,10 +27,10 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
+          <Route path="design" element={<Design />} />
           <Route path="login" element={<Login />} />
           <Route path="/" element={<HomeLayout />}>
             <Route index element={<CoursesDisplayLayout />} />
-            <Route path="design" element={<Design />} />
           </Route>
         </Routes>
       </BrowserRouter>
