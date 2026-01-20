@@ -19,8 +19,10 @@ export function HomeLayout() {
     queryFn: getUser,
   });
 
-  const userData = toCamel(user).user;
-  console.log(userData);
+  let userData;
+  if (isUserFetchSuccessful) {
+    userData = toCamel(user).user;
+  }
 
   const { isSuccess, data } = useQuery({
     queryKey: ['courses'],
