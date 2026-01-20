@@ -5,29 +5,30 @@ import { requireCourseMember } from "../../middlewares/auth.middleware.js";
 export function createPostsRouter({ postsController }) {
   const router = Router();
 
-  const getPostsHandler = "/courses/:courseId/posts";
+  const getPostsHandler = "/posts/:courseId/";
   router.get(
     getPostsHandler,
     requireCourseMember,
     asyncHandler(postsController.list)
   );
 
-  const createPostHandler = "/courses/:courseId/posts";
+  const createPostHandler = "/posts/:courseId/";
   router.post(
     createPostHandler,
     requireCourseMember,
     asyncHandler(postsController.create)
   );
 
-  const updateOrDeletePostHandler = "/posts/:postId";
+  const updatePostHandler = "/posts/:postId";
   router.patch(
-    updateOrDeletePostHandler,
+    updatePostHandler,
     requireCourseMember,
     asyncHandler(postsController.update)
   );
 
+  const deletePostHandler = "/posts/:postId";
   router.delete(
-    updateOrDeletePostHandler,
+    deletePostHandler,
     requireCourseMember,
     asyncHandler(postsController.delete)
   );
