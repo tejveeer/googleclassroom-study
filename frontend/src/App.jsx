@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router'
-import { Login } from './Login'
-import { HomeLayout } from './HomeLayout'
+import { Login } from './pages/login'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CoursesDisplayLayout } from './CoursesDisplayLayout';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Design } from './Design';
+import { HomeLayout } from './pages/home';
 
 const queryClient = new QueryClient({
   defaultOptions: {

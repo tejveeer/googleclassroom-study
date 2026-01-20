@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Input } from "./design-system/Input";
+import { Input } from "./components/Input";
 
 export function Design() {
   const [value, setValue] = useState("");

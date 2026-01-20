@@ -1,0 +1,64 @@
+import { Menu, Plus } from "lucide-react";
+import { useState } from "react";
+import { CreateCourseModal } from "./CreateCourseModal";
+import { JoinCourseModal } from "./JoinCourseModal";
+import { HeaderCourseDropdownMenu } from "./HeaderCourseDropdownMenu";
+
+export function Header({ userData, setIsSidebarOpen }) {
+  const [isDropdownSelected, setIsDropdownSelected] = useState(false);
+  const [isCreateCourseModalSelected, setIsCreateCourseModalSelected] = useState(false);
+  const [isJoinCourseModalSelected, setIsJoinCourseModalSelected] = useState(false);
+
+  const onClickCreate = () => {
+    setIsCreateCourseModalSelected(true);
+    setIsDropdownSelected(false);
+  }
+
+  const onClickJoinCourse = () => {
+    setIsJoinCourseModalSelected(true);
+    setIsDropdownSelected(false);
+  }
+
+  console.log("header userdata: ", userData, userData?.avatarUrl);
+  return (
+    <div className="col-span-2 p-4 h-16 flex justify-between items-center bg-gray-100 cursor-default">
+      {/* Left side */}
+      <div className="flex gap-4 items-center">
+        <div 
+          className="size-10 flex justify-center items-center hover:bg-gray-200 cursor-pointer transition duration-75 ease-in rounded-full"
+          onClick={() => setIsSidebarOpen(prev => !prev)}
+        >
+          <Menu className="size-8" />
+        </div>
+        <img src="/googleclassroom.png" alt="Google Classroom Logo" className="size-10" />
+        <h1 className="-ml-1 text-2xl text-gray-700">Classroom</h1>
+      </div>
+      {/* Right side */}
+      <div className="flex gap-4 items-center">
+        {/* Add Button */}
+        <div className="relative">
+          <Plus 
+            className="size-10 p-1 rounded-full hover:bg-gray-200 cursor-pointer transition duration-150 ease-in"
+            onClick={() => setIsDropdownSelected(prev => !prev)}
+          />
+          {isDropdownSelected && <HeaderCourseDropdownMenu 
+            setIsDropdownSelected={setIsDropdownSelected}
+            onClickCreate={onClickCreate}
+            onClickJoinCourse={onClickJoinCourse}
+          />}
+        </div>
+        {
+          userData?.avatarUrl ?
+            <img className="size-11 rounded-full p-1 hover:bg-gray-200 cursor-pointer transition duration-100 ease-in" src={userData.avatarUrl} />
+            : <div className="profile size-10 rounded-lg transition duration-200 ease-in hover:bg-purple-400 bg-purple-300 cursor-pointer"></div>
+        }
+      </div>
+
+      {/* Modals */}
+      {isCreateCourseModalSelected && 
+        <CreateCourseModal setIsCreateCourseModalSelected={setIsCreateCourseModalSelected} />}
+      {isJoinCourseModalSelected && 
+        <JoinCourseModal setIsJoinCourseModalSelected={setIsJoinCourseModalSelected} />}
+    </div>
+  );
+}
