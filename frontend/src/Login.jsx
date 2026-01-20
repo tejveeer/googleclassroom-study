@@ -3,8 +3,9 @@ const API_BASE = "http://localhost:3000";
 export function Login() {
   const handleLogin = async () => {
     window.location.href = `${API_BASE}/api/auth/google`;
-  }
+  };
 
+  
   return (
     <div className="min-h-screen mx-auto max-w-max flex flex-col gap-2 justify-center items-center select-none">
       <h1 className="text-3xl font-bold">Google Classroom</h1>

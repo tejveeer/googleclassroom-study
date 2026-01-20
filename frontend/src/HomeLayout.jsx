@@ -7,7 +7,21 @@ import { toCamel, tw } from "./utility";
 import { Input } from "./design-system/Input";
 import { ChevronUp, Home, Menu, Plus, UserPen } from "lucide-react";
 
+async function getUser() {
+  const res = await fetch("http://localhost:3000/api/auth/me", { credentials: "include" });
+  if (!res.ok) throw new Error("Failed to load user");
+  return res.json();
+}
+
 export function HomeLayout() {
+  const { isSuccess: isUserFetchSuccessful, data: user } = useQuery({
+    queryKey: ["me"],
+    queryFn: getUser,
+  });
+
+  const userData = toCamel(user).user;
+  console.log(userData);
+
   const { isSuccess, data } = useQuery({
     queryKey: ['courses'],
     queryFn: fetchUserCourses
@@ -22,7 +36,7 @@ export function HomeLayout() {
   const onClose = () => setIsSidebarOpen(false);
   return (
     <div className="min-h-screen bg-pink-300 flex flex-col select-none">
-      <Header setIsSidebarOpen={setIsSidebarOpen} />
+      <Header userData={userData} setIsSidebarOpen={setIsSidebarOpen} />
       <div className="flex flex-1">
         <Sidebar isOpen={isSidebarOpen} onClose={onClose} courses={courses} />
         <div className="flex-1 bg-gray-100">
@@ -35,7 +49,7 @@ export function HomeLayout() {
   );
 }
 
-function Header({ setIsSidebarOpen }) {
+function Header({ userData, setIsSidebarOpen }) {
   const [isDropdownSelected, setIsDropdownSelected] = useState(false);
   const [isCreateCourseModalSelected, setIsCreateCourseModalSelected] = useState(false);
   const [isJoinCourseModalSelected, setIsJoinCourseModalSelected] = useState(false);
@@ -50,6 +64,7 @@ function Header({ setIsSidebarOpen }) {
     setIsDropdownSelected(false);
   }
 
+  console.log("header userdata: ", userData, userData?.avatarUrl);
   return (
     <div className="col-span-2 p-4 h-16 flex justify-between items-center bg-gray-100 cursor-default">
       {/* Left side */}
@@ -77,7 +92,11 @@ function Header({ setIsSidebarOpen }) {
             onClickJoinCourse={onClickJoinCourse}
           />}
         </div>
-        <div className="profile size-10 rounded-lg transition duration-200 ease-in hover:bg-purple-400 bg-purple-300 cursor-pointer"></div>
+        {
+          userData?.avatarUrl ?
+            <img className="size-11 rounded-full p-1 hover:bg-gray-200 cursor-pointer transition duration-100 ease-in" src={userData.avatarUrl} />
+            : <div className="profile size-10 rounded-lg transition duration-200 ease-in hover:bg-purple-400 bg-purple-300 cursor-pointer"></div>
+        }
       </div>
 
       {/* Modals */}
@@ -344,7 +363,7 @@ function Sidebar({ isOpen, onClose, courses }) {
               `
             }>Teaching</p>
             <div className={tw(
-                "size-10 flex justify-center items-center transition duration-150 ease-in", 
+                "size-10 flex justify-center items-center transition duration-75 ease-in", 
                 teachingClicked ? "rotate-180" : "",
                 isOpen ? 'opacity-100' : 'opacity-0 w-0'
               )}>
