@@ -2,7 +2,7 @@ import { useState } from "react";
 import { HeaderButton } from "./HeaderButton";
 
 export function Header() {
-  const [selectedButton, setSelectedButton] = useState("");
+  const [selectedButton, setSelectedButton] = useState("stream");
   const onClickButton = (buttonName) => {
     setSelectedButton(buttonName);
   }

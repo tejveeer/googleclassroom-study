@@ -8,6 +8,7 @@ import { Design } from './pages/design';
 import { HomeLayout } from './pages/home';
 import { RequireAuth } from './RequireAuth';
 import { Course } from './pages/home/pages/course';
+import { Stream } from './pages/home/pages/course/pages/stream';
 
 const TWO_MINUTES = 2 * 60 * 1000;
 const FIVE_MINUTES = 5 * 60 * 1000;
@@ -37,7 +38,9 @@ export function App() {
           <Route element={<RequireAuth />}>
             <Route path="/" element={<HomeLayout />}>
               <Route index element={<CoursesDisplayLayout />} />
-              <Route path="/courses/:courseId" element={<Course />} />
+              <Route path="/courses/:courseId" element={<Course />}>
+                <Route index element={<Stream />} />
+              </Route>
             </Route>
           </Route>
         </Routes>

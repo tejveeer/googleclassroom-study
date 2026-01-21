@@ -7,16 +7,18 @@ export function Design() {
 
   console.log(value);
   return <>
-    <div className="flex w-48 flex-col gap-4">
-      <Input 
-        placeholder="Standard Input" 
-        onChange={(e) => setValue(e.target.value)} 
-      />
-      <Input
-        type="secondary"
-        placeholder="Standard Input" 
-        onChange={(e) => setValue2(e.target.value)} 
-      />
+    <div className="min-h-screen w-full p-6">
+      <div className="flex w-48 flex-col gap-4">
+        <Input 
+          placeholder="Standard Input" 
+          onChange={(e) => setValue(e.target.value)} 
+        />
+        <Input
+          type="secondary"
+          placeholder="Standard Input" 
+          onChange={(e) => setValue2(e.target.value)} 
+        />
+      </div>
     </div>
   </>;
 }

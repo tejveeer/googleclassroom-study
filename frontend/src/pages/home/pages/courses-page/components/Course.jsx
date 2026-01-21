@@ -1,27 +1,16 @@
 import { MoreVertical } from "lucide-react";
 import { useRef, useState } from "react";
-import { useClickAway } from "react-use";
 import { DeleteCourseDropdown } from "./DeleteCourseDropdown";
 import { useNavigate } from "react-router";
+import { Dropdown } from "@/components/Dropdown";
 
 export function Course({ courseData, deleteCourseMutation }) {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const dropdownRef = useRef(null);
   const kebabRef = useRef(null);
 
   const onClickDelete = () => deleteCourseMutation.mutate({ courseId: courseData.id });
-
-  // Close only when click is outside BOTH the dropdown and the kebab button
-  useClickAway(dropdownRef, (event) => {
-    const target = event.target;
-
-    // If the click happened on the kebab button (or inside it), ignore.
-    if (kebabRef.current && kebabRef.current.contains(target)) return;
-
-    setIsDropdownOpen(false);
-  });
 
   const onClickKebab = (e) => {
     e.stopPropagation(); // prevents weird parent click handlers
@@ -61,10 +50,13 @@ export function Course({ courseData, deleteCourseMutation }) {
       </article>
 
       {isDropdownOpen && (
-        <DeleteCourseDropdown
-          dropdownRef={dropdownRef}
-          onClickDelete={onClickDelete}
-          onClose={() => setIsDropdownOpen(false)}
+        <Dropdown 
+          dropdownTriggerButtonRef={kebabRef}
+          dropdownButtonObject={{
+            "Delete": onClickDelete
+          }}
+          showDropdown={setIsDropdownOpen}
+          className="left-56 -bottom-12"
         />
       )}
     </div>

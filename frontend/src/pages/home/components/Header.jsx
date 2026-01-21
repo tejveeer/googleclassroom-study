@@ -1,25 +1,25 @@
 import { Menu, Plus } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CreateCourseModal } from "./CreateCourseModal";
 import { JoinCourseModal } from "./JoinCourseModal";
 import { HeaderCourseDropdownMenu } from "./HeaderCourseDropdownMenu";
+import { Dropdown } from "@/components/Dropdown";
 
 export function Header({ userData, setIsSidebarOpen }) {
   const [isDropdownSelected, setIsDropdownSelected] = useState(false);
   const [isCreateCourseModalSelected, setIsCreateCourseModalSelected] = useState(false);
   const [isJoinCourseModalSelected, setIsJoinCourseModalSelected] = useState(false);
 
+  const plusRef = useRef(null);
+
   const onClickCreate = () => {
     setIsCreateCourseModalSelected(true);
-    setIsDropdownSelected(false);
   }
 
-  const onClickJoinCourse = () => {
+  const onClickJoin = () => {
     setIsJoinCourseModalSelected(true);
-    setIsDropdownSelected(false);
   }
 
-  console.log("header userdata: ", userData, userData?.avatarUrl);
   return (
     <div className="col-span-2 p-4 h-16 flex justify-between items-center bg-gray-100 cursor-default">
       {/* Left side */}
@@ -37,15 +37,21 @@ export function Header({ userData, setIsSidebarOpen }) {
       <div className="flex gap-4 items-center">
         {/* Add Button */}
         <div className="relative">
-          <Plus 
+          <Plus
+            ref={plusRef} 
             className="size-10 p-1 rounded-full hover:bg-gray-200 cursor-pointer transition duration-150 ease-in"
             onClick={() => setIsDropdownSelected(prev => !prev)}
           />
-          {isDropdownSelected && <HeaderCourseDropdownMenu 
-            setIsDropdownSelected={setIsDropdownSelected}
-            onClickCreate={onClickCreate}
-            onClickJoinCourse={onClickJoinCourse}
-          />}
+          {isDropdownSelected && 
+            <Dropdown 
+              dropdownTriggerButtonRef={plusRef}
+              dropdownButtonObject={{
+                "Join course": onClickJoin,
+                "Create course": onClickCreate
+              }}
+              showDropdown={setIsDropdownSelected}
+              className="right-6 top-6"
+            />}
         </div>
         {
           userData?.avatarUrl ?
