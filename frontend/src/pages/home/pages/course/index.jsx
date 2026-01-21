@@ -11,7 +11,7 @@ export function Course() {
     course = courses.filter(it => it.id == courseId)[0];
   }
   return <>
-    <div className="h-full flex flex-col">
+    <div className="h-full select-text flex flex-col">
       <Header />
       <div className="flex-1">
         <Outlet context={course} />

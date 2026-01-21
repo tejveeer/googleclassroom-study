@@ -13,8 +13,13 @@ export const Input = forwardRef(({
   labelBg = 'bg-white',
   ...props 
 }, ref) => {
-  const Component = type === "primary" ? InputPrimary : InputSecondary;
-  
+  const Component =
+  type === "primary"
+    ? InputPrimary
+    : type === "secondary"
+    ? InputSecondary
+    : InputTertiary;
+
   return (
     <Component 
       ref={ref} 
@@ -132,3 +137,87 @@ const InputSecondary = forwardRef(({
     </div>
   );
 });
+
+const InputTertiary = forwardRef(
+  (
+    {
+      placeholder,
+      error,
+      isRequired,
+      onBlur,
+      onFocus,
+      labelBg = "bg-white",
+      className,
+      rows = 6, // you can override
+      ...props
+    },
+    ref
+  ) => {
+    const [isFocused, setIsFocused] = useState(false);
+    const internalRef = useRef(null);
+
+    useImperativeHandle(ref, () => internalRef.current);
+
+    const hasValue =
+      props.value !== undefined
+        ? props.value !== ""
+        : (internalRef.current?.value ?? "") !== "";
+
+    const shouldFloat = isFocused || hasValue;
+
+    return (
+      <div
+        onClick={() => internalRef.current?.focus()}
+        className={tw(
+          "group relative w-full rounded-md border-b bg-gray-50",
+          "px-4 pt-6 pb-3 cursor-text",
+          "transition-colors duration-150",
+          isFocused
+            ? !error
+              ? "border-b-blue-600"
+              : "border-b-red-500"
+            : "border-gray-300 hover:border-blue-500",
+          className
+        )}
+      >
+        <label
+          className={tw(
+            "absolute left-3 cursor-text pointer-events-none px-1",
+            labelBg,
+            "transition-all duration-150 ease-out",
+            shouldFloat
+              ? "top-2 text-xs -translate-y-0"
+              : "top-6 text-base",
+            isFocused ? "text-blue-600" : "text-gray-500 group-hover:text-blue-500",
+            error ? "text-red-500 group-hover:text-red-600" : ""
+          )}
+        >
+          {placeholder}
+          {isRequired && "*"}
+        </label>
+
+        <textarea
+          {...props}
+          ref={internalRef}
+          rows={rows}
+          onFocus={(e) => {
+            setIsFocused(true);
+            onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setIsFocused(false);
+            onBlur?.(e);
+          }}
+          className={tw(
+            "w-full bg-transparent outline-none appearance-none",
+            "text-gray-800",
+            "resize-none",                 // prevents drag-resize
+            "leading-relaxed",
+            "break-words whitespace-pre-wrap", // wrap long text + preserve newlines
+            error ? "caret-red-700" : "caret-blue-700"
+          )}
+        />
+      </div>
+    );
+  }
+);
