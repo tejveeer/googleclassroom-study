@@ -5,7 +5,7 @@ import { Header } from "./components/Header";
 import { useCourses, useUser } from "./api/queries";
 
 export function HomeLayout() {
-  const userData = useUser();
+  const { userData } = useUser();
   const courses = useCourses();
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -17,9 +17,9 @@ export function HomeLayout() {
       <div className="flex flex-1">
         <Sidebar isOpen={isSidebarOpen} onClose={onClose} courses={courses} />
         <div className="flex-1 bg-gray-100">
-          {courses && <div className="bg-white h-full p-6 rounded-tl-4xl">
-            <Outlet context={courses} />
-          </div>}
+          <div className="bg-white h-full rounded-tl-4xl">
+            {courses && <Outlet context={courses} />}
+          </div>
         </div>
       </div>
     </div>

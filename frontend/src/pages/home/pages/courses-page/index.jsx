@@ -12,13 +12,15 @@ export function CoursesDisplayLayout() {
   }
 
   return <>
-    <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
-      {courses.map((courseData) => 
-        <Course 
-          key={courseData.id} 
-          courseData={courseData}
-          deleteCourseMutation={deleteCourseMutation} 
-        />)}
+    <div className="h-full p-6">
+      <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
+        {courses.map((courseData) => 
+          <Course 
+            key={courseData.id} 
+            courseData={courseData}
+            deleteCourseMutation={deleteCourseMutation} 
+          />)}
+      </div>
     </div>
   </>;
 }

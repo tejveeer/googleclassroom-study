@@ -3,13 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchUserCourses, getUser } from "./client";
 
 export function useUser() {
-  const { isSuccess, data } = useQuery({
+  const { isLoading, isError, isSuccess, data } = useQuery({
     queryKey: ["me"],
     queryFn: getUser,
   });
 
   const userData = isSuccess ? toCamel(data).user : undefined;
-  return userData;
+  return { isLoading, isError, isSuccess, userData };
 }
 
 export function useCourses() {

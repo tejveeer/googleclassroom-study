@@ -1,19 +1,24 @@
 import { BrowserRouter, Routes, Route } from 'react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { CoursesDisplayLayout } from './pages/home/pages/courses';
+import { CoursesDisplayLayout } from './pages/home/pages/courses-page';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import { Login } from './pages/login'
 import { Design } from './pages/design';
 import { HomeLayout } from './pages/home';
+import { RequireAuth } from './RequireAuth';
+import { Course } from './pages/home/pages/course';
+
+const TWO_MINUTES = 2 * 60 * 1000;
+const FIVE_MINUTES = 5 * 60 * 1000;
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 0,
-      gcTime: 0,
-      retry: false,
-      refetchOnWindowFocus: false,
+      staleTime: TWO_MINUTES,      // data is fresh for 2 min
+      gcTime: FIVE_MINUTES,        // keep cache around after unused
+      retry: false,                // don't retry on errors (esp auth)
+      refetchOnWindowFocus: false, // avoid surprise refetches
       refetchOnReconnect: false,
     },
     mutations: {
@@ -29,8 +34,11 @@ export function App() {
         <Routes>
           <Route path="design" element={<Design />} />
           <Route path="login" element={<Login />} />
-          <Route path="/" element={<HomeLayout />}>
-            <Route index element={<CoursesDisplayLayout />} />
+          <Route element={<RequireAuth />}>
+            <Route path="/" element={<HomeLayout />}>
+              <Route index element={<CoursesDisplayLayout />} />
+              <Route path="/courses/:courseId" element={<Course />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

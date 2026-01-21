@@ -2,8 +2,10 @@ import { MoreVertical } from "lucide-react";
 import { useRef, useState } from "react";
 import { useClickAway } from "react-use";
 import { DeleteCourseDropdown } from "./DeleteCourseDropdown";
+import { useNavigate } from "react-router";
 
 export function Course({ courseData, deleteCourseMutation }) {
+  const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const dropdownRef = useRef(null);
@@ -26,9 +28,15 @@ export function Course({ courseData, deleteCourseMutation }) {
     setIsDropdownOpen((prev) => !prev);
   };
 
+  const onClickCourse = () => {
+    navigate(`/courses/${courseData.id}`);
+  }
+
   return (
     <div className="relative">
-      <article className="size-66 cursor-pointer hover:shadow-md shadow-gray-200 transition duration-200 ease-in border overflow-hidden border-gray-300 rounded-xl flex flex-col">
+      <article 
+        onClick={onClickCourse}
+        className="size-66 cursor-pointer hover:shadow-md shadow-gray-200 transition duration-200 ease-in border overflow-hidden border-gray-300 rounded-xl flex flex-col">
         <header className="bg-green-400 p-4">
           <h1 className="text-2xl text-white">{courseData.courseName}</h1>
           <p>{courseData.courseRoom}</p>

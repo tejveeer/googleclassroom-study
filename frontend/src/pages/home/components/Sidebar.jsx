@@ -43,7 +43,7 @@ export function Sidebar({ isOpen, onClose, courses }) {
             <Home className="flex flex-col size-8" />
           </div>
           <p className={
-            `text-center overflow-hidden transition-opacity duration-200 ease-out ml-4
+            `text-center overflow-hidden transition-opacity duration-200 py-1.5 ease-out ml-4
             text-xl
             ${isOpen ? 'opacity-100' : 'opacity-0 w-0'}
             `
