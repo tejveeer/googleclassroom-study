@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/Input";
 import { courseFormRules } from "./modalConfigs";
 import { useCreateCourse } from "../api/mutations";
+import { ModalBackground } from "@/components/ModalBackground";
 
 export function CreateCourseModal({ setIsCreateCourseModalSelected }) {
   const {
@@ -23,10 +24,7 @@ export function CreateCourseModal({ setIsCreateCourseModalSelected }) {
   const onSubmit = (data) => createCourseMutation.mutate(data);
   return (
     <>
-      <div
-        className="fixed z-20 top-0 left-0 flex justify-center items-center min-h-screen w-full bg-black/20"
-        onClick={() => setIsCreateCourseModalSelected(false)}
-      >
+      <ModalBackground setModalOpen={setIsCreateCourseModalSelected}>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="bg-gray-200 w-86 p-6 shadow-lg rounded-2xl flex flex-col"
@@ -66,7 +64,7 @@ export function CreateCourseModal({ setIsCreateCourseModalSelected }) {
               hover:bg-blue-200 p-2 rounded-full" 
             type="submit" value="Submit" />
         </form>
-      </div>
+      </ModalBackground>
     </>
   );
 }

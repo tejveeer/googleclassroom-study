@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { joinCourseFormRules } from "./modalConfigs";
 import { Input } from "@/components/Input";
 import { useJoinCourse } from "../api/mutations";
+import { ModalBackground } from "@/components/ModalBackground";
 
 export function JoinCourseModal({ setIsJoinCourseModalSelected }) {
   const {
@@ -26,11 +27,8 @@ export function JoinCourseModal({ setIsJoinCourseModalSelected }) {
 
   return (
     <>
-      <div
-        className="fixed z-20 top-0 left-0 flex justify-center items-center min-h-screen w-full bg-black/20"
-        onClick={() => setIsJoinCourseModalSelected(false)}
-      >
-        <form
+      <ModalBackground setModalOpen={setIsJoinCourseModalSelected}>
+      <form
           onSubmit={handleSubmit(onSubmit)}
           className="p-6 bg-gray-200 shadow-lg rounded-2xl flex flex-col"
           onClick={(e) => e.stopPropagation()}
@@ -57,7 +55,7 @@ export function JoinCourseModal({ setIsJoinCourseModalSelected }) {
           <input
             className="text-md self-end text-blue-700 cursor-pointer hover:text-blue-800 transition duration-75 ease-in hover:bg-blue-200 p-2 rounded-full" type="submit" value="Submit" />
         </form>
-      </div>
+      </ModalBackground>
     </>
   );
 }
