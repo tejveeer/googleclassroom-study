@@ -33,6 +33,17 @@ export function Stream() {
               authorProfile={null}
               datePosted="Yesterday"
               content="This is some content for the post"
+              comments={[
+                {id: 2, authorName: "Another", datePosted: "1 hour ago", content: "This is another comment"},
+                {id: 1, authorName: "Author", datePosted: "Yesterday", content: "This is a comment"},
+              ]}
+            />
+            <Post 
+              authorName="Name"
+              authorProfile={null}
+              datePosted="Yesterday"
+              content="This is some content for the post"
+              comments={[]}
             />
           </div>
         </div>

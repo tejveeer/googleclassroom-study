@@ -8,7 +8,7 @@ export function Header() {
   }
 
   return <>
-    <div className="shrink-0 flex border-b border-gray-300">
+    <div className="sticky top-0 shrink-0 bg-white rounded-tl-4xl flex border-b border-gray-300">
       <div className="ml-5"></div>
       <HeaderButton 
         name="Stream" 
