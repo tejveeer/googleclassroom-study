@@ -39,11 +39,11 @@ export function createDependencies() {
 
   const postsService = createPostsService({ pool });
   const postsController = createPostsController({ postsService });
-  const postsRouter = createPostsRouter({ postsController });
+  const postsRouter = createPostsRouter({ postsController, pool });
 
   return {
     pool,
-    
+
     coursesService,
     coursesController,
     coursesRouter,

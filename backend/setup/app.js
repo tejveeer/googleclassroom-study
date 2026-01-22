@@ -4,6 +4,7 @@ import { errorMiddleware  } from '../middlewares/error.middleware.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
+
 export function createApp(deps) {
   const app = express();
 
@@ -13,6 +14,14 @@ export function createApp(deps) {
     credentials: true
   }));
   app.use(cookieParser());
+  app.use((req, res, next) => {
+    console.log(
+      `[${new Date().toISOString()}]`,
+      req.method,
+      req.originalUrl
+    );
+    next();
+  });
 
   const apiRouter = createApiRouter(deps);
 

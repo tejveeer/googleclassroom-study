@@ -2,48 +2,48 @@ import { Router } from "express";
 import asyncHandler from "../utils/asyncHandler.js";
 import { requireCourseMember } from "../../middlewares/auth.middleware.js";
 
-export function createPostsRouter({ postsController }) {
+export function createPostsRouter({ postsController, pool }) {
   const router = Router();
 
-  const getPostsHandler = "/posts/:courseId/";
+  const getPostsHandler = "/:courseId/";
   router.get(
     getPostsHandler,
-    requireCourseMember,
+    requireCourseMember(pool),
     asyncHandler(postsController.list)
   );
 
-  const createPostHandler = "/posts/:courseId/";
+  const createPostHandler = "/:courseId/";
   router.post(
     createPostHandler,
-    requireCourseMember,
+    requireCourseMember(pool),
     asyncHandler(postsController.create)
   );
 
-  const updatePostHandler = "/posts/:postId";
+  const updatePostHandler = "/:postId";
   router.patch(
     updatePostHandler,
-    requireCourseMember,
+    requireCourseMember(pool),
     asyncHandler(postsController.update)
   );
 
-  const deletePostHandler = "/posts/:postId";
+  const deletePostHandler = "/:postId";
   router.delete(
     deletePostHandler,
-    requireCourseMember,
+    requireCourseMember(pool),
     asyncHandler(postsController.delete)
   );
 
-  const addCommentsToPostHandler = "/posts/:postId/comments";
+  const addCommentsToPostHandler = "/:postId/comments";
   router.post(
     addCommentsToPostHandler,
-    requireCourseMember,
+    requireCourseMember(pool),
     asyncHandler(postsController.addComment)
   );
 
-  const deleteComment = "/posts/:postId/comments/:commentId";
+  const deleteComment = "/:postId/comments/:commentId";
   router.delete(
     deleteComment,
-    requireCourseMember,
+    requireCourseMember(pool),
     asyncHandler(postsController.deleteComment)
   );
 

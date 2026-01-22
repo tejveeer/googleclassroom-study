@@ -31,7 +31,7 @@ export function requireCourseMember(pool) {
 
       const isMemberResult = await isCourseMember(pool, courseId, userId);
       if (isMemberResult.success) {
-        req.memberId = isMemberResult.data;
+        req.body.memberId = isMemberResult.data;
         return next();
       } else {
         return res.status(403).json({ error: "NOT_COURSE_MEMBER" });
@@ -81,13 +81,13 @@ export function requireStudent(pool) {
 // HELPERS
 async function isCourseMember(pool, courseId, userId) {
   const res = await pool.query(`
-    SELECT member_id
+    SELECT id
     FROM classroom.course_members
     WHERE course_id = $1 AND user_id = $2
   `, [courseId, userId]);
 
   if (res.rows.length !== 0) {
-    return { success: true, data: res.rows[0].member_id };
+    return { success: true, data: res.rows[0].id };
   }
 
   return { success: false };

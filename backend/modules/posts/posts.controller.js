@@ -23,6 +23,7 @@ export function createPostsController({ postsService }) {
       const { courseId } = req.params;
       const { memberId, content } = req.body;
 
+      console.log(courseId, memberId, content);
       if (!courseId || !memberId || !content) {
         return res
           .status(400)
