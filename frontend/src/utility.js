@@ -15,7 +15,7 @@ export function tw(...args) {
   return args.filter(Boolean).join(' ')
 }
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://localhost:3000/api";
 
 async function parseBody(res) {
   // Some endpoints might return empty bodies

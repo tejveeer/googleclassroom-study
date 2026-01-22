@@ -1,11 +1,11 @@
 import { api } from "@/utility";
 
-export const getUser = () => api.get("/api/auth/me");
+export const getUser = () => api.get("/auth/me");
 
-export const fetchUserCourses = () => api.get("/api/courses/");
+export const fetchUserCourses = () => api.get("/courses/");
 
 export const createCourse = (courseData) =>
-  api.post("/api/courses/create", courseData);
+  api.post("/courses/create", courseData);
 
 export const joinCourse = (joinCourseData) =>
-api.post("/api/courses/join", joinCourseData);
+  api.post("/courses/join", joinCourseData);

@@ -7,7 +7,7 @@ import { NewPostModal } from "./components/NewPostModal";
 import { useState } from "react";
 
 export function Stream() {
-  const { courseName, courseRoom, userRole, joinId: courseCode } = useOutletContext();
+  const { courseName, courseRoom, userRole, joinId: courseCode, id: courseId } = useOutletContext();
   const [isPostModalOpen, setPostModalOpen] = useState(false);
 
   const onClickPostButton = () => {
@@ -30,7 +30,12 @@ export function Stream() {
           </div>
         </div>
       </div>
-      {isPostModalOpen && <NewPostModal setPostModalOpen={setPostModalOpen} />}
+      {isPostModalOpen && 
+        <NewPostModal 
+          setPostModalOpen={setPostModalOpen} 
+          courseId={courseId}
+        />
+      }
     </div>
   </>
 }

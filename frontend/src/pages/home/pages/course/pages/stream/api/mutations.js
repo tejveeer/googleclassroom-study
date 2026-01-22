@@ -7,7 +7,7 @@ import {
   deleteCommment,
 } from "./client";
 
-export function useCreatePost(courseId, onSuccess, onError) {
+export function useCreatePost({ courseId, onSuccess, onError }) {
   const queryClient = useQueryClient();
 
   return useMutation({
