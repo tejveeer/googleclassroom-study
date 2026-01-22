@@ -5,6 +5,7 @@ import { NewPostButton } from "./components/NewPostButton";
 import { Upcoming } from "./components/Upcoming";
 import { NewPostModal } from "./components/NewPostModal";
 import { useState } from "react";
+import { Post } from "./components/Post";
 
 export function Stream() {
   const { courseName, courseRoom, userRole, joinId: courseCode, id: courseId } = useOutletContext();
@@ -20,13 +21,19 @@ export function Stream() {
         <Banner courseName={courseName} courseRoom={courseRoom} />
         <div className="flex flex-row gap-4">
           {/* Left container - contains Course Code and Upcoming Work */}
-          <div className="hidden md:flex flex-col gap-2 shrink-0">
+          <div className="hidden md:flex flex-col gap-3 shrink-0">
             <CourseCode courseCode={courseCode} />
             <Upcoming />
           </div>
           {/* Right container - contains New Post button and new Posts */}
-          <div className="flex flex-col flex-1 gap-2">
+          <div className="flex flex-col flex-1 gap-3">
             <NewPostButton onClick={onClickPostButton} />
+            <Post 
+              authorName="Name"
+              authorProfile={null}
+              datePosted="Yesterday"
+              content="This is some content for the post"
+            />
           </div>
         </div>
       </div>
