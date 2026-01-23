@@ -52,7 +52,7 @@ export function useAddComment({ courseId, postId, onSuccess, onError }) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (content) => addPostComment(postId, content),
+    mutationFn: (content) => addPostComment(postId, courseId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts", courseId] });
       onSuccess?.();
@@ -61,11 +61,11 @@ export function useAddComment({ courseId, postId, onSuccess, onError }) {
   });
 }
 
-export function useDeleteComment({ courseId, commentId, onSuccess, onError }) {
+export function useDeleteComment({ commentId, courseId, postId, onSuccess, onError }) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (commentId) => deleteCommment(commentId),
+    mutationFn: () => deleteCommment(commentId, courseId, postId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts", courseId] });
       onSuccess?.();

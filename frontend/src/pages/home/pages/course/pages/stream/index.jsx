@@ -20,6 +20,7 @@ export function Stream() {
     setPostModalOpen(true);
   };
 
+  console.log(posts);
   return <>
     <div className="p-6 h-full">
       <div className="mx-auto h-full max-w-248 flex flex-col gap-4">

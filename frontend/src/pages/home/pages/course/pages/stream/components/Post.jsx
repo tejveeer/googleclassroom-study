@@ -1,9 +1,9 @@
 import { Dropdown } from "@/components/Dropdown";
 import { useUser } from "@/pages/home/api/queries";
-import { tw } from "@/utility";
+import { timeAgo, tw } from "@/utility";
 import { MoreVertical, SendHorizonal } from "lucide-react";
 import { useRef, useState } from "react";
-import { useDeletePost, useUpdatePost } from "../api/mutations";
+import { useAddComment, useDeleteComment, useDeletePost, useUpdatePost } from "../api/mutations";
 
 export function Post({
   postId,
@@ -55,13 +55,13 @@ export function Post({
     }, 0);
   };
 
-  const addComment = () => {};
-
   const onClickCommentNumber = () => {
     setShowAllComments((prev) => !prev);
   };
 
-  const commentsToDisplay = showAllComments ? comments : comments?.slice(0, 1) ?? [];
+  const commentsToDisplay = showAllComments
+    ? comments
+    : [comments?.at(-1)].filter(Boolean);
 
   const showKebab =
     userRole === "teacher" ? true : authorMemberId === userMemberId ? true : false;
@@ -207,25 +207,54 @@ export function Post({
         {/* Comments list */}
         {commentsToDisplay.map((c) => (
           <Comment
-            key={c.id}
-            authorName={c.authorName}
-            authorProfile={c.authorProfile}
-            datePosted={c.datePosted}
+            key={c.commentId}
+            commentId={c.commentId}
+            postId={postId}
+            courseId={courseId}
+            authorMemberId={c.memberId}
+            authorName={c.name}
+            authorProfile={c.avatarUrl}
+            datePosted={timeAgo(c.createdAt)}
             content={c.content}
+            userMemberId={userMemberId}
+            userRole={userRole}
           />
         ))}
 
         {/* Add comment */}
-        <AddComment addComment={() => addComment()} hasComments={comments.length !== 0} />
+        <AddComment courseId={courseId} postId={postId} hasComments={comments.length !== 0} />
       </div>
     </article>
   );
 }
 
-function Comment({ authorName, authorProfile, datePosted, content }) {
+function Comment({
+  commentId,
+  postId,
+  courseId,
+  authorMemberId, 
+  authorName, 
+  authorProfile, 
+  datePosted, 
+  content, 
+  userMemberId, 
+  userRole 
+}) {
+  const showKebab =
+    userRole === "teacher" ? true : authorMemberId === userMemberId ? true : false;
+
+  const [showDropdown, setShowDropdown] = useState(false);
+  const kebabRef = useRef(null);
+
+  console.log(commentId);
+  const deleteCommentMutation = useDeleteComment({ courseId, postId, commentId });
+  const onClickDelete = () => {
+    deleteCommentMutation.mutate();
+  };
+
   return (
     <div className="flex gap-3">
-      <div className="size-9 bg-purple-400 rounded-full shrink-0" />
+      <img className="size-9 rounded-full shrink-0" src={authorProfile} />
       <div className="flex-1">
         <p className="text-sm text-gray-600">
           <span className="font-medium">{authorName}</span>
@@ -233,23 +262,59 @@ function Comment({ authorName, authorProfile, datePosted, content }) {
         </p>
         <p className="text-gray-800">{content}</p>
       </div>
+      {showKebab && (
+        <div className="relative shrink-0">
+          <div
+            ref={kebabRef}
+            type="button"
+            className="size-10 flex justify-center items-center rounded-full p-1 cursor-pointer hover:bg-gray-200 transition duration-100 ease-in"
+            aria-label="More options"
+            onClick={() => setShowDropdown((prev) => !prev)}
+          >
+            <MoreVertical className="text-gray-600" />
+          </div>
+
+          {showDropdown && (
+            <Dropdown
+              dropdownTriggerButtonRef={kebabRef}
+              dropdownButtonObject={{
+                Delete: onClickDelete
+              }}
+              showDropdown={setShowDropdown}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-function AddComment({ addComment, hasComments }) {
+function AddComment({ courseId, postId, hasComments }) {
   const [comment, setComment] = useState("");
-  const [isAddCommentButtonClicked, setIsAddCommentButtonClicked] = useState(false);
+  const [isAddCommentHeaderClicked, setIsAddCommentHeaderClicked] = useState(false);
+  const textareaRef = useRef(null);
 
   const {
     userData: { avatarUrl },
   } = useUser();
 
-  const onClickAddCommentButton = () => {
-    setIsAddCommentButtonClicked(true);
+  const addCommentMutation = useAddComment({ courseId, postId });
+
+  const onClickAddComment = () => {
+    addCommentMutation.mutate(comment, {
+      onSuccess: () => {
+        setComment("");                 // clear input
+        textareaRef.current?.blur();    // unfocus textarea
+        setIsAddCommentHeaderClicked(false); // optional: collapse UI
+      },
+    });
   };
 
-  if (hasComments || isAddCommentButtonClicked) {
+  const onClickAddCommentHeader = () => {
+    setIsAddCommentHeaderClicked(true);
+  };
+
+  if (hasComments || isAddCommentHeaderClicked) {
     return (
       <div className="flex items-center gap-2">
         {/* Profile */}
@@ -268,6 +333,7 @@ function AddComment({ addComment, hasComments }) {
           "
         >
           <textarea
+            ref={textareaRef}
             name="comment"
             rows={1}
             placeholder="Add class comment..."
@@ -286,7 +352,7 @@ function AddComment({ addComment, hasComments }) {
 
         <button
           type="button"
-          onClick={() => addComment(comment)}
+          onClick={onClickAddComment}
           className={tw(
             "size-10 flex justify-center items-center rounded-full transition duration-75 ease-in text-gray-500",
             comment ? "hover:bg-gray-200 cursor-pointer" : ""
@@ -309,7 +375,7 @@ function AddComment({ addComment, hasComments }) {
         transition duration-100 ease-in 
         cursor-pointer -translate-x-2
       "
-      onClick={onClickAddCommentButton}
+      onClick={onClickAddCommentHeader}
     >
       Add comment
     </div>

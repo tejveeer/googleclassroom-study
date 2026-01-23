@@ -40,7 +40,7 @@ export function createPostsRouter({ postsController, pool }) {
     asyncHandler(postsController.addComment)
   );
 
-  const deleteComment = "/courseId/:postId/comments/:commentId";
+  const deleteComment = "/:courseId/:postId/comments/:commentId";
   router.delete(
     deleteComment,
     requireCourseMember(pool),
