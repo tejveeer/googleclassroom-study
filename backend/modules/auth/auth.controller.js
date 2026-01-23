@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
-import { CREATE_USER, GET_USER } from "./auth.data-access.js";
+import { CREATE_USER, GET_USER, GET_USER_COURSE_MEMBER_ID } from "./auth.data-access.js";
 
 export function createAuthController({ pool }) {
   const client = new OAuth2Client({
@@ -66,6 +66,22 @@ export function createAuthController({ pool }) {
       } catch {
         return res.status(500).json({ error: "Internal server error" });
       }
+    },
+
+    async getUserCourseId(req, res) {
+      try {
+        const courseId = req.params.courseId;
+        const { userId } = req.body;
+
+        if (!userId || !courseId) {
+          return res.status(404).json({ error: "Not enough information" });
+        }
+
+        const user = await getUserCourseId(pool, userId, courseId);
+        return res.status(200).json({ user });
+      } catch {
+        return res.status(500).json({ error: "Internal server error" });
+      }
     }
   };
 }
@@ -82,6 +98,14 @@ async function getUser(pool, userId) {
   const { rows } = await pool.query(
     GET_USER,
     [userId]
+  );
+  return rows[0];
+}
+
+async function getUserCourseId(pool, userId, courseId) {
+  const { rows } = await pool.query(
+    GET_USER_COURSE_MEMBER_ID,
+    [userId, courseId]
   );
   return rows[0];
 }

@@ -2,7 +2,6 @@ import { Menu, Plus } from "lucide-react";
 import { useRef, useState } from "react";
 import { CreateCourseModal } from "./CreateCourseModal";
 import { JoinCourseModal } from "./JoinCourseModal";
-import { HeaderCourseDropdownMenu } from "./HeaderCourseDropdownMenu";
 import { Dropdown } from "@/components/Dropdown";
 
 export function Header({ userData, setIsSidebarOpen }) {

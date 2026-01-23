@@ -8,6 +8,7 @@ export function createAuthRouter({ authController }) {
   router.get('/google', asyncHandler(authController.googleAuth));
   router.get('/google/callback', asyncHandler(authController.googleCallback));
   router.get('/me', requireAuth, asyncHandler(authController.getMe));
+  router.get('/me/:courseId', requireAuth, asyncHandler(authController.getUserCourseId));
 
   return router;
 }

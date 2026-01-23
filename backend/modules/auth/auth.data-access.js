@@ -8,4 +8,9 @@ export const GET_USER = `
   SELECT name, avatar_url
   FROM classroom.users
   WHERE id = $1
+`;
+export const GET_USER_COURSE_MEMBER_ID = `
+  SELECT *
+  FROM classroom.course_members
+  WHERE user_id = $1 AND course_id = $2
 `

@@ -6,15 +6,21 @@ import { Upcoming } from "./components/Upcoming";
 import { NewPostModal } from "./components/NewPostModal";
 import { useState } from "react";
 import { Post } from "./components/Post";
+import { usePosts } from "./api/queries";
+import { timeAgo } from "@/utility";
 
 export function Stream() {
-  const { courseName, courseRoom, userRole, joinId: courseCode, id: courseId } = useOutletContext();
+  const { course, userMemberId } = useOutletContext();
+  const { courseName, courseRoom, userRole, joinId: courseCode, id: courseId } = course;
   const [isPostModalOpen, setPostModalOpen] = useState(false);
+
+  const { posts } = usePosts({ courseId });
 
   const onClickPostButton = () => {
     setPostModalOpen(true);
   };
 
+  console.log(posts);
   return <>
     <div className="p-6 h-full">
       <div className="mx-auto h-full max-w-248 flex flex-col gap-4">
@@ -45,6 +51,19 @@ export function Stream() {
               content="This is some content for the post"
               comments={[]}
             />
+            {posts && posts.map(p => 
+              <Post
+                key={p.id}
+                authorMemberId={p.authorMemberId}
+                authorName={p.authorName}
+                authorProfile={p.authorAvatarUrl}
+                datePosted={timeAgo(p.createdAt)}
+                content={p.content}
+                comments={p.comments}
+                userMemberId={userMemberId}
+                userRole={userRole}
+              />
+            )}
           </div>
         </div>
       </div>

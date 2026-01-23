@@ -52,7 +52,7 @@ export function useDeletePost(courseId, onSuccess, onError) {
   });
 }
 
-export function useAddPostComment(postId, onSuccess, onError) {
+export function useAddComment(postId, onSuccess, onError) {
   const queryClient = useQueryClient();
 
   return useMutation({

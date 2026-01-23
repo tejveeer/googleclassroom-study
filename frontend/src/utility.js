@@ -1,3 +1,18 @@
+const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+
+export function timeAgo(date) {
+  const diff = Date.now() - new Date(date).getTime();
+  const seconds = Math.round(diff / 1000);
+  const minutes = Math.round(diff / 1000 / 60);
+  const hours   = Math.round(diff / 1000 / 60 / 60);
+  const days    = Math.round(diff / 1000 / 60 / 60 / 24);
+
+  if (days !== 0)   return rtf.format(-days, "day");
+  if (hours !== 0)  return rtf.format(-hours, "hour");
+  if (minutes !== 0)return rtf.format(-minutes, "minute");
+  return rtf.format(-seconds, "second");
+}
+
 export function toCamel(obj) {
   if (Array.isArray(obj)) return obj.map(toCamel);
   if (obj !== null && typeof obj === "object") {

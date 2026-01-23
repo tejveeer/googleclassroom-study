@@ -1,9 +1,19 @@
 import { Dropdown } from "@/components/Dropdown";
+import { useUser } from "@/pages/home/api/queries";
 import { tw } from "@/utility";
 import { MoreVertical, SendHorizonal } from "lucide-react";
 import { useRef, useState } from "react";
 
-export function Post({ authorName, authorProfile, datePosted, content, comments = [] }) {
+export function Post({ 
+  authorMemberId, 
+  authorName, 
+  authorProfile, 
+  datePosted, 
+  content, 
+  comments = [], 
+  userMemberId,
+  userRole,
+}) {
   const [showAllComments, setShowAllComments] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const kebabRef = useRef(null);
@@ -19,6 +29,11 @@ export function Post({ authorName, authorProfile, datePosted, content, comments 
     showAllComments
     ? comments
     : comments?.slice(0, 1) ?? [];
+  
+  const showKebab =
+    userRole === 'teacher'
+    ? true
+    : authorMemberId === userMemberId ? true : false;
 
   return (
     <article className="bg-gray-100 rounded-xl overflow-hidden">
@@ -27,16 +42,16 @@ export function Post({ authorName, authorProfile, datePosted, content, comments 
         {/* Metadata */}
         <div className="flex gap-3 items-start">
           {/* Profile */}
-          <div className="size-10 bg-purple-400 rounded-full shrink-0" />
+          <img className="size-10 rounded-full shrink-0" src={authorProfile} />
 
           {/* Name and date posted */}
           <div className="flex-1 flex flex-col">
-            <p className="text-gray-800 font-medium leading-5">{authorName}</p>
+            <p className="text-gray-600 font-medium leading-5">{authorName}</p>
             <p className="text-xs text-gray-500">{datePosted}</p>
           </div>
 
           {/* More */}
-          <div className="relative">
+          {showKebab && <div className="relative">
             <div
               ref={kebabRef}
               type="button"
@@ -55,7 +70,7 @@ export function Post({ authorName, authorProfile, datePosted, content, comments 
                 showDropdown={setShowDropdown}
               />
             }
-          </div>
+          </div>}
         </div>
 
         {/* Content of the post */}
@@ -87,17 +102,20 @@ export function Post({ authorName, authorProfile, datePosted, content, comments 
         ))}
 
         {/* Add comment */}
-        <AddComment addComment={addComment} hasComments={comments.length !== 0} />
+        <AddComment 
+          addComment={addComment} 
+          hasComments={comments.length !== 0} 
+        />
       </div>
     </article>
   );
 }
 
-function Comment({ authorName, datePosted, content }) {
+function Comment({ authorName, authorProfile, datePosted, content }) {
   return <div className="flex gap-3">
     <div className="size-9 bg-purple-400 rounded-full shrink-0" />
     <div className="flex-1">
-      <p className="text-sm text-gray-800">
+      <p className="text-sm text-gray-600">
         <span className="font-medium">{authorName}</span>
         <span className="text-gray-400"> • {datePosted}</span>
       </p>
@@ -110,6 +128,8 @@ function AddComment({ addComment, hasComments }) {
   const [comment, setComment] = useState("");
   const [isAddCommentButtonClicked, setIsAddCommentButtonClicked] = useState(false);
 
+  const { userData: { avatarUrl } } = useUser();
+
   const onClickAddCommentButton = () => {
     setIsAddCommentButtonClicked(true);
   }
@@ -118,7 +138,7 @@ function AddComment({ addComment, hasComments }) {
     return (
       <div className="flex items-center gap-2">
         {/* Profile */}
-        <div className="size-9 bg-purple-400 rounded-full shrink-0" />
+        <img className="size-9 rounded-full shrink-0" src={avatarUrl} />
   
         {/* Input pill */}
         <div
