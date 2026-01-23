@@ -81,7 +81,7 @@ export function createPostsController({ postsService }) {
     // DELETE /posts/:postId
     async delete(req, res) {
       const { postId } = req.params;
-      const { memberId } = req.body;
+      const { memberId, role } = req.body;
 
       if (!postId || !memberId) {
         return res
@@ -89,7 +89,7 @@ export function createPostsController({ postsService }) {
           .json({ error: "postId and memberId are required" });
       }
 
-      const result = await postsService.deletePost(memberId, postId);
+      const result = await postsService.deletePost(memberId, postId, role);
 
       if (!result.success) {
         if (result.reason === "NOT_FOUND") {

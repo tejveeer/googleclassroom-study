@@ -55,7 +55,7 @@ export const repository = {
   `,
   DELETE_POST: `
     DELETE FROM classroom.course_posts
-    WHERE id = $1 AND member_id = $2;
+    WHERE id = $1;
   `,
   CREATE_COMMENT: `
     INSERT INTO classroom.course_post_comments (post_id, member_id, content)

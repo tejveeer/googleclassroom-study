@@ -57,7 +57,7 @@ export function createPostsService({ pool }) {
       }
     },
 
-    async deletePost(memberId, postId) {
+    async deletePost(memberId, postId, role) {
       const { rows: existing } = await pool.query(
         repository.DOES_POST_EXIST,
         [postId]
@@ -67,14 +67,14 @@ export function createPostsService({ pool }) {
         return { success: false, reason: "NOT_FOUND" };
       }
 
-      if (existing[0].member_id !== memberId) {
+      if (existing[0].member_id !== memberId && role !== "teacher") {
         return { success: false, reason: "FORBIDDEN" };
       }
+      console.log(role);
 
       try {
         const { rowCount } = await pool.query(repository.DELETE_POST, [
           postId,
-          memberId,
         ]);
 
         if (rowCount === 0) return { success: false };

@@ -19,28 +19,28 @@ export function createPostsRouter({ postsController, pool }) {
     asyncHandler(postsController.create)
   );
 
-  const updatePostHandler = "/:postId";
+  const updatePostHandler = "/:courseId/:postId";
   router.patch(
     updatePostHandler,
     requireCourseMember(pool),
     asyncHandler(postsController.update)
   );
 
-  const deletePostHandler = "/:postId";
+  const deletePostHandler = "/:courseId/:postId";
   router.delete(
     deletePostHandler,
     requireCourseMember(pool),
     asyncHandler(postsController.delete)
   );
 
-  const addCommentsToPostHandler = "/:postId/comments";
+  const addCommentsToPostHandler = "/:courseId/:postId/comments";
   router.post(
     addCommentsToPostHandler,
     requireCourseMember(pool),
     asyncHandler(postsController.addComment)
   );
 
-  const deleteComment = "/:postId/comments/:commentId";
+  const deleteComment = "/courseId/:postId/comments/:commentId";
   router.delete(
     deleteComment,
     requireCourseMember(pool),

@@ -26,7 +26,20 @@ export function useUpdatePost({ courseId, postId, onSuccess, onError }) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (content) => updatePost(postId, content),
+    mutationFn: (content) => updatePost(postId, courseId, content),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts", courseId] });
+      onSuccess?.();
+    },
+    onError: (err) => onError?.(err),
+  });
+}
+
+export function useDeletePost({ courseId, postId, onSuccess, onError }) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => deletePost(postId, courseId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts", courseId] });
       onSuccess?.();

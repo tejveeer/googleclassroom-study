@@ -3,7 +3,7 @@ import { useUser } from "@/pages/home/api/queries";
 import { tw } from "@/utility";
 import { MoreVertical, SendHorizonal } from "lucide-react";
 import { useRef, useState } from "react";
-import { useUpdatePost } from "../api/mutations";
+import { useDeletePost, useUpdatePost } from "../api/mutations";
 
 export function Post({
   postId,
@@ -39,9 +39,13 @@ export function Post({
     },
   });
 
-  const onClickDelete = () => {};
+  const deletePostMutation = useDeletePost({ courseId, postId });
 
-  const onClickUpdate = () => {
+  const onClickDelete = () => {
+    deletePostMutation.mutate();
+  };
+
+  const onClickEdit = () => {
     setShowDropdown(false);
     setIsEditing(true);
 
@@ -61,6 +65,12 @@ export function Post({
 
   const showKebab =
     userRole === "teacher" ? true : authorMemberId === userMemberId ? true : false;
+  const canEditComment = authorMemberId === userMemberId;
+
+  const dropdownButtonObject = 
+    canEditComment 
+    ? { Delete: onClickDelete, Edit: onClickEdit } 
+    : { Delete: onClickDelete };
 
   const onClickCancelEdit = () => {
     setIsEditing(false);
@@ -68,9 +78,6 @@ export function Post({
   };
 
   const onClickSaveEdit = () => {
-    // Optional: ignore empty or unchanged
-    // if (!draftContent.trim() || draftContent === content) return;
-
     updatePostMutation.mutate(draftContent);
   };
 
@@ -105,10 +112,7 @@ export function Post({
               {showDropdown && (
                 <Dropdown
                   dropdownTriggerButtonRef={kebabRef}
-                  dropdownButtonObject={{
-                    Delete: onClickDelete,
-                    Update: onClickUpdate,
-                  }}
+                  dropdownButtonObject={dropdownButtonObject}
                   showDropdown={setShowDropdown}
                 />
               )}
@@ -132,7 +136,7 @@ export function Post({
                 text-sm
                 text-gray-800
                 focus:outline-none
-                focus:ring-1
+                focus:ring-2
                 focus:ring-blue-600
                 resize-none
               "
@@ -162,7 +166,7 @@ export function Post({
                 onClick={onClickCancelEdit}
                 disabled={updatePostMutation.isPending}
                 className={tw(
-                  "text-sm text-gray-500 hover:text-gray-700",
+                  "cursor-pointer text-sm text-gray-500 hover:text-gray-700",
                   updatePostMutation.isPending ? "opacity-50 cursor-not-allowed" : ""
                 )}
               >
@@ -174,7 +178,7 @@ export function Post({
                 onClick={onClickSaveEdit}
                 disabled={updatePostMutation.isPending}
                 className={tw(
-                  "text-sm font-medium text-blue-700 hover:text-blue-800",
+                  "text-sm cursor-pointer font-medium text-blue-700 hover:text-blue-800",
                   updatePostMutation.isPending ? "opacity-50 cursor-not-allowed" : ""
                 )}
               >
