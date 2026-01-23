@@ -7,6 +7,7 @@ export function requireAuth(req, res, next) {
     return res.status(401).json({ error: "UNAUTHENTICATED" });
   }
 
+  console.log("Req Auth", req.method);
   try {
     const payload = jwt.verify(auth, process.env.JWT_SECRET);
 
@@ -29,6 +30,7 @@ export function requireCourseMember(pool) {
       const courseId = req.params.courseId;
       const userId = req.body.userId;
 
+      console.log("Req Course Mem", req.method);
       const isMemberResult = await isCourseMember(pool, courseId, userId);
       if (isMemberResult.success) {
         req.body.memberId = isMemberResult.data;

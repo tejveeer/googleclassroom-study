@@ -48,6 +48,7 @@ export function createPostsController({ postsService }) {
     async update(req, res) {
       const { postId } = req.params;
       const { memberId, content } = req.body;
+      console.log("Updating post with postId: ", postId);
 
       if (!postId || !memberId || !content) {
         return res

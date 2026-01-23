@@ -20,7 +20,6 @@ export function Stream() {
     setPostModalOpen(true);
   };
 
-  console.log(posts);
   return <>
     <div className="p-6 h-full">
       <div className="mx-auto h-full max-w-248 flex flex-col gap-4">
@@ -34,26 +33,11 @@ export function Stream() {
           {/* Right container - contains New Post button and new Posts */}
           <div className="flex flex-col flex-1 gap-3">
             <NewPostButton onClick={onClickPostButton} />
-            <Post 
-              authorName="Name"
-              authorProfile={null}
-              datePosted="Yesterday"
-              content="This is some content for the post"
-              comments={[
-                {id: 2, authorName: "Another", datePosted: "1 hour ago", content: "This is another comment"},
-                {id: 1, authorName: "Author", datePosted: "Yesterday", content: "This is a comment"},
-              ]}
-            />
-            <Post 
-              authorName="Name"
-              authorProfile={null}
-              datePosted="Yesterday"
-              content="This is some content for the post"
-              comments={[]}
-            />
             {posts && posts.map(p => 
               <Post
                 key={p.id}
+                postId={p.id}
+                courseId={courseId}
                 authorMemberId={p.authorMemberId}
                 authorName={p.authorName}
                 authorProfile={p.authorAvatarUrl}

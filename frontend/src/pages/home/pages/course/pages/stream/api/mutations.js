@@ -22,62 +22,42 @@ export function useCreatePost({ courseId, onSuccess, onError }) {
   });
 }
 
-export function useUpdatePost(postId, onSuccess, onError) {
+export function useUpdatePost({ courseId, postId, onSuccess, onError }) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (content) => updatePost(postId, content),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["post", postId] });
-      onSuccess?.();
-    },
-    onError: (err) => {
-      onError?.(err);
-    },
-  });
-}
-
-export function useDeletePost(courseId, onSuccess, onError) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (postId) => deletePost(postId),
-    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts", courseId] });
       onSuccess?.();
     },
-    onError: (err) => {
-      onError?.(err);
-    },
+    onError: (err) => onError?.(err),
   });
 }
 
-export function useAddComment(postId, onSuccess, onError) {
+export function useAddComment({ courseId, postId, onSuccess, onError }) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (content) => addPostComment(postId, content),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["post", postId] });
+      queryClient.invalidateQueries({ queryKey: ["posts", courseId] });
       onSuccess?.();
     },
-    onError: (err) => {
-      onError?.(err);
-    },
+    onError: (err) => onError?.(err),
   });
 }
 
-export function useDeleteComment(postId, onSuccess, onError) {
+export function useDeleteComment({ courseId, commentId, onSuccess, onError }) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (commentId) => deleteCommment(commentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["post", postId] });
+      queryClient.invalidateQueries({ queryKey: ["posts", courseId] });
       onSuccess?.();
     },
-    onError: (err) => {
-      onError?.(err);
-    },
+    onError: (err) => onError?.(err),
   });
 }
+

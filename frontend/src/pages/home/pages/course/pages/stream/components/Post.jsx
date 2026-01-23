@@ -3,14 +3,18 @@ import { useUser } from "@/pages/home/api/queries";
 import { tw } from "@/utility";
 import { MoreVertical, SendHorizonal } from "lucide-react";
 import { useRef, useState } from "react";
+import { useUpdatePost } from "../api/mutations";
 
-export function Post({ 
-  authorMemberId, 
-  authorName, 
-  authorProfile, 
-  datePosted, 
-  content, 
-  comments = [], 
+export function Post({
+  postId,
+  courseId,
+
+  authorMemberId,
+  authorName,
+  authorProfile,
+  datePosted,
+  content,
+  comments = [],
   userMemberId,
   userRole,
 }) {
@@ -18,22 +22,57 @@ export function Post({
   const [showDropdown, setShowDropdown] = useState(false);
   const kebabRef = useRef(null);
 
+  // Editing state
+  const [isEditing, setIsEditing] = useState(false);
+  const [draftContent, setDraftContent] = useState(content);
+  const textareaRef = useRef(null);
+
+  const updatePostMutation = useUpdatePost({
+    courseId,
+    postId,
+    onSuccess: () => {
+      setIsEditing(false);
+      setShowDropdown(false);
+    },
+    onError: () => {
+      // optional: keep editing open
+    },
+  });
+
   const onClickDelete = () => {};
+
+  const onClickUpdate = () => {
+    setShowDropdown(false);
+    setIsEditing(true);
+
+    // Focus after textarea appears in DOM
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 0);
+  };
+
   const addComment = () => {};
 
   const onClickCommentNumber = () => {
-    setShowAllComments(prev => !prev);
+    setShowAllComments((prev) => !prev);
   };
 
-  const commentsToDisplay =
-    showAllComments
-    ? comments
-    : comments?.slice(0, 1) ?? [];
-  
+  const commentsToDisplay = showAllComments ? comments : comments?.slice(0, 1) ?? [];
+
   const showKebab =
-    userRole === 'teacher'
-    ? true
-    : authorMemberId === userMemberId ? true : false;
+    userRole === "teacher" ? true : authorMemberId === userMemberId ? true : false;
+
+  const onClickCancelEdit = () => {
+    setIsEditing(false);
+    setDraftContent(content);
+  };
+
+  const onClickSaveEdit = () => {
+    // Optional: ignore empty or unchanged
+    // if (!draftContent.trim() || draftContent === content) return;
+
+    updatePostMutation.mutate(draftContent);
+  };
 
   return (
     <article className="bg-gray-100 rounded-xl overflow-hidden">
@@ -51,36 +90,107 @@ export function Post({
           </div>
 
           {/* More */}
-          {showKebab && <div className="relative">
-            <div
-              ref={kebabRef}
-              type="button"
-              className="size-10 flex justify-center items-center rounded-full p-1 cursor-pointer hover:bg-gray-200 transition duration-100 ease-in"
-              aria-label="More options"
-              onClick={() => setShowDropdown(prev => !prev)}
-            >
-              <MoreVertical className="text-gray-600" />
+          {showKebab && (
+            <div className="relative">
+              <div
+                ref={kebabRef}
+                type="button"
+                className="size-10 flex justify-center items-center rounded-full p-1 cursor-pointer hover:bg-gray-200 transition duration-100 ease-in"
+                aria-label="More options"
+                onClick={() => setShowDropdown((prev) => !prev)}
+              >
+                <MoreVertical className="text-gray-600" />
+              </div>
+
+              {showDropdown && (
+                <Dropdown
+                  dropdownTriggerButtonRef={kebabRef}
+                  dropdownButtonObject={{
+                    Delete: onClickDelete,
+                    Update: onClickUpdate,
+                  }}
+                  showDropdown={setShowDropdown}
+                />
+              )}
             </div>
-            {showDropdown && 
-              <Dropdown 
-                dropdownTriggerButtonRef={kebabRef}
-                dropdownButtonObject={{
-                  "Delete": onClickDelete
-                }}
-                showDropdown={setShowDropdown}
-              />
-            }
-          </div>}
+          )}
         </div>
 
         {/* Content of the post */}
-        <p className="mt-2 text-gray-800">{content}</p>
+        {isEditing ? (
+          <div className="mt-2 flex flex-col gap-2">
+            <textarea
+              ref={textareaRef}
+              value={draftContent}
+              onChange={(e) => setDraftContent(e.target.value)}
+              rows={3}
+              className="
+                w-full
+                rounded-lg
+                border border-gray-300
+                px-3 py-2
+                text-sm
+                text-gray-800
+                focus:outline-none
+                focus:ring-1
+                focus:ring-blue-600
+                resize-none
+              "
+              onKeyDown={(e) => {
+                // Ctrl/Cmd + Enter to save
+                if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+                  e.preventDefault();
+                  onClickSaveEdit();
+                }
+                // Escape to cancel
+                if (e.key === "Escape") {
+                  e.preventDefault();
+                  onClickCancelEdit();
+                }
+              }}
+            />
+
+            <div className="flex items-center gap-3 self-end">
+              {updatePostMutation.isError ? (
+                <p className="text-xs text-red-600">
+                  {updatePostMutation.error?.message ?? "Failed to update post"}
+                </p>
+              ) : null}
+
+              <button
+                type="button"
+                onClick={onClickCancelEdit}
+                disabled={updatePostMutation.isPending}
+                className={tw(
+                  "text-sm text-gray-500 hover:text-gray-700",
+                  updatePostMutation.isPending ? "opacity-50 cursor-not-allowed" : ""
+                )}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={onClickSaveEdit}
+                disabled={updatePostMutation.isPending}
+                className={tw(
+                  "text-sm font-medium text-blue-700 hover:text-blue-800",
+                  updatePostMutation.isPending ? "opacity-50 cursor-not-allowed" : ""
+                )}
+              >
+                {updatePostMutation.isPending ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="mt-2 text-gray-800 whitespace-pre-wrap">{content}</p>
+        )}
       </div>
 
       {/* Comment part */}
       <div className="flex flex-col px-6 py-3 gap-3">
         {/* Number of comments */}
-        {comments.length >= 2 && 
+        {comments.length >= 2 && (
           <button
             type="button"
             className="text-sm -translate-x-2 select-none text-blue-700 hover:bg-blue-100 px-3 py-2 rounded-full transition duration-75 ease-in cursor-pointer font-medium flex items-center gap-2 self-start"
@@ -88,58 +198,59 @@ export function Post({
           >
             {comments.length} comments
           </button>
-        }
+        )}
 
-        {/* (Optional) Comments list placeholder */}
+        {/* Comments list */}
         {commentsToDisplay.map((c) => (
-          <Comment 
-            key={c.id} 
-            authorName={c.authorName} 
+          <Comment
+            key={c.id}
+            authorName={c.authorName}
             authorProfile={c.authorProfile}
             datePosted={c.datePosted}
-            content={c.content} 
+            content={c.content}
           />
         ))}
 
         {/* Add comment */}
-        <AddComment 
-          addComment={addComment} 
-          hasComments={comments.length !== 0} 
-        />
+        <AddComment addComment={() => addComment()} hasComments={comments.length !== 0} />
       </div>
     </article>
   );
 }
 
 function Comment({ authorName, authorProfile, datePosted, content }) {
-  return <div className="flex gap-3">
-    <div className="size-9 bg-purple-400 rounded-full shrink-0" />
-    <div className="flex-1">
-      <p className="text-sm text-gray-600">
-        <span className="font-medium">{authorName}</span>
-        <span className="text-gray-400"> • {datePosted}</span>
-      </p>
-      <p className="text-gray-800">{content}</p>
+  return (
+    <div className="flex gap-3">
+      <div className="size-9 bg-purple-400 rounded-full shrink-0" />
+      <div className="flex-1">
+        <p className="text-sm text-gray-600">
+          <span className="font-medium">{authorName}</span>
+          <span className="text-gray-400"> • {datePosted}</span>
+        </p>
+        <p className="text-gray-800">{content}</p>
+      </div>
     </div>
-  </div>;
+  );
 }
 
 function AddComment({ addComment, hasComments }) {
   const [comment, setComment] = useState("");
   const [isAddCommentButtonClicked, setIsAddCommentButtonClicked] = useState(false);
 
-  const { userData: { avatarUrl } } = useUser();
+  const {
+    userData: { avatarUrl },
+  } = useUser();
 
   const onClickAddCommentButton = () => {
     setIsAddCommentButtonClicked(true);
-  }
+  };
 
   if (hasComments || isAddCommentButtonClicked) {
     return (
       <div className="flex items-center gap-2">
         {/* Profile */}
         <img className="size-9 rounded-full shrink-0" src={avatarUrl} />
-  
+
         {/* Input pill */}
         <div
           className="
@@ -156,6 +267,7 @@ function AddComment({ addComment, hasComments }) {
             name="comment"
             rows={1}
             placeholder="Add class comment..."
+            value={comment}
             onChange={(e) => setComment(e.target.value)}
             className="
               w-full bg-transparent
@@ -167,31 +279,35 @@ function AddComment({ addComment, hasComments }) {
             "
           />
         </div>
+
         <button
           type="button"
-          onClick={addComment}
+          onClick={() => addComment(comment)}
           className={tw(
             "size-10 flex justify-center items-center rounded-full transition duration-75 ease-in text-gray-500",
             comment ? "hover:bg-gray-200 cursor-pointer" : ""
           )}
           aria-label="Send"
+          disabled={!comment}
         >
           <SendHorizonal className="size-5" />
         </button>
       </div>
-    );  
+    );
   }
 
-  return <>
-    <div className="
-      px-3 py-2 text-blue-700 
-      text-sm font-medium hover:bg-blue-100 
-      self-start rounded-full 
-      transition duration-100 ease-in 
-      cursor-pointer -translate-x-2"
+  return (
+    <div
+      className="
+        px-3 py-2 text-blue-700 
+        text-sm font-medium hover:bg-blue-100 
+        self-start rounded-full 
+        transition duration-100 ease-in 
+        cursor-pointer -translate-x-2
+      "
       onClick={onClickAddCommentButton}
     >
       Add comment
     </div>
-  </>
+  );
 }
