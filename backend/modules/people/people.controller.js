@@ -20,6 +20,7 @@ export function createPeopleController({ peopleService }) {
       }
 
       const result = await peopleService.listStudents(courseId);
+      console.log("students rows count", result.data.length);
       return res.json(result.data);
     },
 
@@ -31,17 +32,18 @@ export function createPeopleController({ peopleService }) {
         return res.status(400).json({ error: "courseId and memberId are required" });
       }
 
-      console.log("In delete");
       const result = await peopleService.deleteCourseMember(courseId, memberId);
 
+      console.log("deleteCourseMember result", result);
       if (!result?.success) {
         if (result.reason === "NON_EXISTENT_USER") {
           return res.status(404).json({ error: "Member not found in this course" });
         }
+        console.log(result)
         return res.status(500).json({ error: "Failed to delete course member" });
       }
 
-      return res.status(200);
+      return res.status(200).json(result.data);
     },
   };
 }

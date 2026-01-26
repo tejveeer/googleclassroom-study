@@ -88,7 +88,7 @@ export function Post({
         {/* Metadata */}
         <div className="flex gap-3 items-start">
           {/* Profile */}
-          <img referrerpolicy="no-referrer" className="size-10 rounded-full shrink-0" src={authorProfile} />
+          <img referrerPolicy="no-referrer" className="size-10 rounded-full shrink-0" src={authorProfile} />
 
           {/* Name and date posted */}
           <div className="flex-1 flex flex-col">

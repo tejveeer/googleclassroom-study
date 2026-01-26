@@ -7,7 +7,11 @@ export function Student({ studentInfo, isUserTeacher, courseId }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const kebabRef = useRef(null);
 
-  const removeStudent = useRemoveCourseMember({ courseId, memberId: studentInfo?.memberId });
+  const removeStudent = useRemoveCourseMember({ 
+    courseId, 
+    memberId: studentInfo?.memberId,
+  });
+  console.log("courseId", courseId, "typeof courseId", typeof courseId);
   const onClickRemove = () => {
     removeStudent.mutate();
   };

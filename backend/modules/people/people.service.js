@@ -16,7 +16,7 @@ export function createPeopleService({ pool }) {
         return { success: false, reason: "NON_EXISTENT_USER" };
       }
 
-      return { sucess: true, data: res.rows[0] };
+      return { success: true, data: res.rows[0] };
     }
   }
 }

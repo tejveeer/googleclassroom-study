@@ -56,7 +56,7 @@ export function Header({ userData, setIsSidebarOpen }) {
           userData?.avatarUrl ?
             <img 
               className="size-11 rounded-full p-1 hover:bg-gray-200 cursor-pointer transition duration-100 ease-in"
-              referrerpolicy="no-referrer"
+              referrerPolicy="no-referrer"
               src={userData.avatarUrl} />
             : <div className="profile size-10 rounded-lg transition duration-200 ease-in hover:bg-purple-400 bg-purple-300 cursor-pointer"></div>
         }

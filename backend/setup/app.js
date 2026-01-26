@@ -21,6 +21,13 @@ export function createApp(deps) {
     credentials: true
   }));
   app.use(cookieParser());
+  app.use((req, res, next) => {
+    res.on("finish", () => {
+      console.log("FINAL", req.method, req.originalUrl, res.statusCode);
+    });
+    next();
+  });
+  app.disable("etag");
 
   const apiRouter = createApiRouter(deps);
 
