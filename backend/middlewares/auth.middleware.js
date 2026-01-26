@@ -30,7 +30,7 @@ export function requireCourseMember(pool) {
       const courseId = req.params.courseId;
       const userId = req.body.userId;
 
-      console.log("Req Course Mem", req.method);
+      console.log("Req Course Mem", req.method, courseId, userId);
       const isMemberResult = await isCourseMember(pool, courseId, userId);
       if (isMemberResult.success) {
         req.body.memberId = isMemberResult.id;

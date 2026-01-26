@@ -1,23 +1,26 @@
 import { Router } from "express";
 import asyncHandler from "../utils/asyncHandler.js";
-import { requireCourseMember } from "../../middlewares/auth.middleware.js";
+import { requireCourseMember, requireTeacher } from "../../middlewares/auth.middleware.js";
 
-export function createPeopleRouter({ peopleController }) {
+export function createPeopleRouter({ peopleController, pool }) {
   const router = Router();
+  const requireCourseMemberFn = requireCourseMember(pool);
+  const requireTeacherFn = requireTeacher(pool);
 
   router.get(
     '/teachers/:courseId',
-    requireCourseMember,
+    requireCourseMemberFn,
     asyncHandler(peopleController.listTeachers)
   );
   router.get(
     '/students/:courseId',
-    requireCourseMember,
+    requireCourseMemberFn,
     asyncHandler(peopleController.listStudents)
   );
   router.delete(
-    '/delete/:courseId',
-    requireCourseMember,
+    '/delete/:courseId/:memberId',
+    requireCourseMemberFn,
+    requireTeacherFn,
     asyncHandler(peopleController.deleteCourseMember)
   );
 

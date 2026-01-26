@@ -1,9 +1,24 @@
 import { useState } from "react";
 import { HeaderButton } from "./HeaderButton";
+import { useNavigate } from "react-router";
 
-export function Header() {
+export function Header({ courseId }) {
   const [selectedButton, setSelectedButton] = useState("stream");
+  const navigate = useNavigate();
+
   const onClickButton = (buttonName) => {
+    switch (buttonName) {
+      case "stream":
+        navigate(`/courses/${courseId}`);
+        break;
+      case "classwork":
+        break;
+      case "people":
+        navigate(`/courses/${courseId}/people`);
+        break;
+      case "grades":
+        break;
+    }
     setSelectedButton(buttonName);
   }
 

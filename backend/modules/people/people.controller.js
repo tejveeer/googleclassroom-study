@@ -25,12 +25,13 @@ export function createPeopleController({ peopleService }) {
 
     async deleteCourseMember(req, res) {
       const courseId = req.params.courseId;
-      const memberId = req.body.memberId;
+      const memberId = req.params.memberId;
 
       if (!courseId || !memberId) {
         return res.status(400).json({ error: "courseId and memberId are required" });
       }
 
+      console.log("In delete");
       const result = await peopleService.deleteCourseMember(courseId, memberId);
 
       if (!result?.success) {

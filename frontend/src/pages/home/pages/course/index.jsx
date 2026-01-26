@@ -16,7 +16,7 @@ export function Course() {
 
   return <>
     <div className="h-full select-text flex flex-col">
-      <Header />
+      <Header courseId={course?.id} />
       <div className="flex-1">
         <Outlet context={{course, userMemberId}} />
       </div>

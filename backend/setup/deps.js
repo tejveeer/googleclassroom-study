@@ -27,15 +27,15 @@ export function createDependencies() {
 
   const coursesService = createCoursesService({ pool });
   const coursesController = createCoursesController({ coursesService });
-  const coursesRouter = createCoursesRouter({ coursesController });
+  const coursesRouter = createCoursesRouter({ coursesController, pool });
 
   const classworkService = createClassworkService({ pool });
   const classworkController = createClassworkController({ classworkService });
-  const classworkRouter = createClassworkRouter({ classworkController });
+  const classworkRouter = createClassworkRouter({ classworkController, pool });
 
   const peopleService = createPeopleService({ pool });
   const peopleController = createPeopleController({ peopleService });
-  const peopleRouter = createPeopleRouter({ peopleController });
+  const peopleRouter = createPeopleRouter({ peopleController, pool });
 
   const postsService = createPostsService({ pool });
   const postsController = createPostsController({ postsService });
