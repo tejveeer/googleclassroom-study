@@ -2,29 +2,32 @@ import { Router } from "express";
 import asyncHandler from "../utils/asyncHandler.js";
 import { requireCourseMember, requireStudent, requireTeacher } from "../../middlewares/auth.middleware.js";
 
-export function createClassworkRouter({ classworkController }) {
+export function createClassworkRouter({ classworkController, pool }) {
   const router = Router();
+  const requireCourseMemberMiddleware = requireCourseMember(pool);
+  const requireTeacherMiddleware = requireTeacher(pool);
+  const requireStudentMiddleware = requireStudent(pool);
 
   // ----------------------------
   // Assignments (course-scoped)
   // ----------------------------
   router.get(
     "/courses/:courseId/assignments",
-    requireCourseMember,
+    requireCourseMemberMiddleware,
     asyncHandler(classworkController.listAssignments)
   );
 
   router.post(
     "/courses/:courseId/assignments",
-    requireCourseMember,
-    requireTeacher,
+    requireCourseMemberMiddleware,
+    requireTeacherMiddleware,
     asyncHandler(classworkController.createAssignment)
   );
 
   router.delete(
     "/courses/:courseId/assignments/:assignmentId",
-    requireCourseMember,
-    requireTeacher,
+    requireCourseMemberMiddleware,
+    requireTeacherMiddleware,
     asyncHandler(classworkController.deleteAssignment)
   );
 
@@ -33,21 +36,21 @@ export function createClassworkRouter({ classworkController }) {
   // ----------------------------
   router.get(
     "/courses/:courseId/topics",
-    requireCourseMember,
+    requireCourseMemberMiddleware,
     asyncHandler(classworkController.listTopics)
   );
 
   router.post(
     "/courses/:courseId/topics",
-    requireCourseMember,
-    requireTeacher,
+    requireCourseMemberMiddleware,
+    requireTeacherMiddleware,
     asyncHandler(classworkController.createTopic)
   );
 
   router.delete(
-    "/courses/:courseId/topics/",
-    requireCourseMember,
-    requireTeacher,
+    "/courses/:courseId/topic/",
+    requireCourseMemberMiddleware,
+    requireTeacherMiddleware,
     asyncHandler(classworkController.deleteTopic)
   );
 
@@ -56,15 +59,15 @@ export function createClassworkRouter({ classworkController }) {
   // ----------------------------
   router.get(
     "/:courseId/assignments/grades",
-    requireCourseMember,
-    requireTeacher,
+    requireCourseMemberMiddleware,
+    requireTeacherMiddleware,
     asyncHandler(classworkController.listAllAssignmentGrades)
   );
 
   router.get(
     "/assignments/:assignmentId/grades",
-    requireCourseMember,
-    requireTeacher,
+    requireCourseMemberMiddleware,
+    requireTeacherMiddleware,
     asyncHandler(classworkController.listAssignmentGrades)
   );
 
@@ -73,15 +76,15 @@ export function createClassworkRouter({ classworkController }) {
   // ----------------------------
   router.get(
     "/assignments/:assignmentId/submissions-status",
-    requireCourseMember,
-    requireTeacher,
+    requireCourseMemberMiddleware,
+    requireTeacherMiddleware,
     asyncHandler(classworkController.getAssignmentSubmissionStatus)
   );
 
   router.patch(
     "/assignments/:assignmentId/submissions-status",
-    requireCourseMember,
-    requireTeacher,
+    requireCourseMemberMiddleware,
+    requireTeacherMiddleware,
     asyncHandler(classworkController.updateAssignmentSubmissionStatus)
   );
 
@@ -90,22 +93,22 @@ export function createClassworkRouter({ classworkController }) {
   // ----------------------------
   router.post(
     "/assignments/:assignmentId/submissions",
-    requireCourseMember,
-    requireStudent,
+    requireCourseMemberMiddleware,
+    requireStudentMiddleware,
     asyncHandler(classworkController.createStudentSubmission)
   );
 
   router.patch(
     "/submissions/:submissionId/mark",
-    requireCourseMember,
-    requireTeacher,
+    requireCourseMemberMiddleware,
+    requireTeacherMiddleware,
     asyncHandler(classworkController.updateStudentSubmissionMark)
   );
 
   router.patch(
     "/submissions/:submissionId/submission-status",
-    requireCourseMember,
-    requireTeacher,
+    requireCourseMemberMiddleware,
+    requireTeacherMiddleware,
     asyncHandler(classworkController.updateStudentSubmissionStatus)
   )
 
