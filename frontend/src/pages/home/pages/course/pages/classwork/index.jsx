@@ -1,3 +1,52 @@
+import { useOutletContext, useParams } from "react-router"
+import { CreateButton } from "./components/CreateButton";
+import { Select } from "@/components/Select";
+import { useState } from "react";
+import { CreateTopicModal } from "./components/CreateTopicModal";
+import { useTopics } from "./api/queries";
+
 export function ClassworkPage() {
-  
+  const { courseId } = useParams();
+  const { course: { userRole } } = useOutletContext();
+  const [selectedValue, setSelectedValue] = useState("all");
+  const [showCreateTopicModel, setShowCreateTopicModal] = useState(false);
+
+  const { topics } = useTopics({ courseId });
+
+  console.log(topics);
+  const isUserTeacher = userRole === "teacher";
+  return <>
+    <div className="p-6 h-full">
+      <div className="mx-auto h-full max-w-180 flex flex-col gap-5">
+        {isUserTeacher && 
+          <CreateButton 
+            setShowCreateTopicModal={setShowCreateTopicModal}  
+          />
+        }
+        <div className="w-62">
+          <Select 
+            options={[
+              { value: "all", label: "All Topics" }
+            ]}
+            value={selectedValue}
+            onChange={setSelectedValue}
+            placeholder="Topic"
+            type="labeled"
+            className="py-3"
+          />
+        </div>
+        {topics && topics.map(({ topic }, idx) => 
+          <div key={idx} className="text-2xl text-gray-700 pb-4 border-b border-gray-300">
+            {topic}
+          </div>
+        )}
+      </div>
+      {showCreateTopicModel && 
+        <CreateTopicModal 
+          courseId={courseId} 
+          setShowCreateTopicModal={setShowCreateTopicModal} 
+        />
+      }
+    </div>
+  </> 
 }

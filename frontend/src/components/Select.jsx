@@ -86,7 +86,7 @@ function SelectMenu({
               type="button"
               onClick={() => onPick(opt.value)}
               className={tw(
-                "w-full text-left px-4 py-3",
+                "w-full text-left px-4 py-3 cursor-pointer",
                 "transition-colors duration-100",
                 isSelected ? "bg-gray-200" : "bg-white hover:bg-gray-100"
               )}
@@ -152,7 +152,7 @@ const SelectNormal = forwardRef(
       : "border-b-gray-300 hover:border-b-blue-500";
 
     return (
-      <div ref={rootRef} className={tw("relative w-full", className)}>
+      <div ref={rootRef} className={tw("relative w-full")}>
         {placeholder ? (
           <div className={tw("mb-1 text-xs font-medium", labelClasses)}>
             {placeholder}
@@ -178,7 +178,8 @@ const SelectNormal = forwardRef(
             borderClasses,
             disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer",
             !disabled && !open ? "hover:bg-gray-200" : "",
-            error ? "text-red-700" : "text-gray-800"
+            error ? "text-red-700" : "text-gray-800",
+            className
           )}
           aria-expanded={open}
           aria-haspopup="listbox"
@@ -284,7 +285,7 @@ const SelectLabeled = forwardRef(
       : "text-gray-800";
 
     return (
-      <div ref={rootRef} className={tw("relative w-full", className)}>
+      <div ref={rootRef} className={tw("relative w-full")}>
         <button
           ref={triggerRef}
           type="button"
@@ -301,7 +302,8 @@ const SelectLabeled = forwardRef(
             "flex items-center justify-between",
             "border transition-colors duration-150",
             border,
-            disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
+            disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer",
+            className
           )}
           aria-expanded={open}
           aria-haspopup="listbox"

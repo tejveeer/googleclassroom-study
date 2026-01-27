@@ -52,22 +52,6 @@ export function useCreateTopic({ courseId, onSuccess, onError }) {
   });
 }
 
-/**
- * Preferred: delete a specific topic by ID
- * Requires backend route: DELETE /courses/:courseId/topics/:topicId
- */
-export function useDeleteTopic({ courseId, topicId, onSuccess, onError }) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: () => deleteTopic(courseId, topicId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["topics", courseId] });
-      onSuccess?.();
-    },
-    onError: (err) => onError?.(err),
-  });
-}
 
 /**
  * Fallback: hits your current backend route DELETE /courses/:courseId/topics/
