@@ -11,6 +11,7 @@ export const Input = forwardRef(({
   isRequired = false, 
   type = 'primary',
   labelBg = 'bg-white',
+  labelPosition = '',
   ...props 
 }, ref) => {
   const Component =
@@ -27,6 +28,7 @@ export const Input = forwardRef(({
       error={error} 
       isRequired={isRequired}
       labelBg={labelBg}
+      labelPosition={labelPosition}
       {...props} 
     />
   );
@@ -36,7 +38,7 @@ export const Input = forwardRef(({
  * Primary Style
  */
 const InputPrimary = forwardRef(({ 
-  placeholder, error, isRequired, onBlur, onFocus, labelBg, ...props 
+  placeholder, error, isRequired, onBlur, onFocus, labelBg, labelPosition, ...props 
 }, ref) => {
   const [isFocused, setIsFocused] = useState(false);
   const internalRef = useRef(null);
@@ -63,7 +65,8 @@ const InputPrimary = forwardRef(({
         "transition-all duration-150 ease-out", // Keep transition on the label only
         shouldFloat ? "top-0 -translate-y-3.5 -translate-x-2 scale-80" : "top-2 scale-100",
         isFocused ? "text-blue-600" : "text-gray-500 group-hover:text-blue-500",
-        error ? "text-red-500 group-hover:text-red-600" : ""
+        error ? "text-red-500 group-hover:text-red-600" : "",
+        labelPosition
       )}>
         {placeholder}{isRequired && "*"}
       </label>
@@ -88,7 +91,7 @@ const InputPrimary = forwardRef(({
  * Secondary Style
  */
 const InputSecondary = forwardRef(({ 
-  placeholder, error, isRequired, onBlur, onFocus, ...props 
+  placeholder, error, isRequired, onBlur, onFocus, labelPosition, ...props 
 }, ref) => {
   const [isFocused, setIsFocused] = useState(false);
   const internalRef = useRef(null);
@@ -117,7 +120,8 @@ const InputSecondary = forwardRef(({
           ? "-translate-y-4.5 -translate-x-1.5 scale-80" 
           : "translate-y-0 scale-100",
         isFocused ? "text-blue-600" : "text-gray-500 group-hover:text-blue-500",
-        error ? "text-red-500 group-hover:text-red-600" : ""
+        error ? "text-red-500 group-hover:text-red-600" : "",
+        labelPosition
       )}>
         {placeholder}{isRequired && "*"}
       </label>
@@ -169,20 +173,20 @@ const InputTertiary = forwardRef(
       <div
         onClick={() => internalRef.current?.focus()}
         className={tw(
-          "group relative w-full rounded-md border-b bg-gray-50",
-          "px-4 pt-6 pb-3 cursor-text",
+          "group relative w-full rounded-md border-b-2 bg-gray-100",
+          "px-3 pt-6 pb-3 cursor-text",
           "transition-colors duration-150",
           isFocused
             ? !error
               ? "border-b-blue-600"
               : "border-b-red-500"
-            : "border-gray-300 hover:border-blue-500",
+            : "border-gray-400 hover:border-blue-500",
           className
         )}
       >
         <label
           className={tw(
-            "absolute left-3 cursor-text pointer-events-none px-1",
+            "absolute left-2 cursor-text pointer-events-none px-1",
             labelBg,
             "transition-all duration-150 ease-out",
             shouldFloat

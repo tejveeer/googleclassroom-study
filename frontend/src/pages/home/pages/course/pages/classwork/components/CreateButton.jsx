@@ -2,11 +2,14 @@ import { Dropdown } from "@/components/Dropdown";
 import { Plus } from "lucide-react";
 import { useRef, useState } from "react";
 
-export function CreateButton({ setShowCreateTopicModal }) {
+export function CreateButton({ setShowCreateTopicModal, setShowCreateAssignmentPage }) {
   const ref = useRef(null);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const onClickCreateAssignment = () => {};
+  const onClickCreateAssignment = () => {
+    console.log("CreateButton assignment create");
+    setShowCreateAssignmentPage(true);
+  };
   const onClickCreateTopic = () => {
     setShowCreateTopicModal(true);
   };
