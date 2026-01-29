@@ -1,3 +1,5 @@
+import { twMerge } from "tailwind-merge";
+
 const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
 export function timeAgo(date) {
@@ -27,7 +29,7 @@ export function toCamel(obj) {
 }
 
 export function tw(...args) {
-  return args.filter(Boolean).join(' ')
+  return twMerge(args);
 }
 
 const BASE_URL = "http://localhost:3000/api";

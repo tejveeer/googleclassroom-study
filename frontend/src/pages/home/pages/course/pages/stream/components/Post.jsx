@@ -254,7 +254,7 @@ function Comment({
 
   return (
     <div className="flex gap-3">
-      <img className="size-9 rounded-full shrink-0" src={authorProfile} />
+      <img referrerPolicy="no-referrer" className="size-9 rounded-full shrink-0" src={authorProfile} />
       <div className="flex-1">
         <p className="text-sm text-gray-600">
           <span className="font-medium">{authorName}</span>
@@ -318,7 +318,7 @@ function AddComment({ courseId, postId, hasComments }) {
     return (
       <div className="flex items-center gap-2">
         {/* Profile */}
-        <img className="size-9 rounded-full shrink-0" src={avatarUrl} />
+        <img referrerPolicy="no-referrer" className="size-9 rounded-full shrink-0" src={avatarUrl} />
 
         {/* Input pill */}
         <div

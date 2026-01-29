@@ -24,8 +24,8 @@ export function Header({ courseId }) {
   }
 
   return <>
-    <div className="sticky top-0 shrink-0 bg-gray-100">
-      <div className="sticky top-0 z-30 shrink-0 bg-white rounded-tl-4xl flex border-b border-gray-300">
+    <div className="sticky top-0 z-100 shrink-0 bg-gray-100">
+      <div className="sticky top-0 shrink-0 bg-white rounded-tl-4xl flex border-b border-gray-300">
         <div className="ml-5"></div>
         <HeaderButton 
           name="Stream" 

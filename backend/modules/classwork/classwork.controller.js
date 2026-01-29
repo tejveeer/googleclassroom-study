@@ -38,15 +38,17 @@ function createAssignmentsController({ classworkService }) {
     async createAssignment(req, res) {
       const courseId = req.params.courseId;
       const {
-        creatorMemberId,
+        memberId,
         topic = null,
         assignmentName,
         instructions,
         totalMarks,
+        dueDate
       } = req.body;
 
+      console.log(courseId, memberId, assignmentName, instructions, totalMarks, dueDate);
       if (
-        !exists(courseId, creatorMemberId, assignmentName, instructions, totalMarks)
+        !exists(courseId, memberId, assignmentName, instructions, totalMarks, dueDate)
       ) {
         return res
           .status(400)
@@ -55,11 +57,12 @@ function createAssignmentsController({ classworkService }) {
 
       const result = await classworkService.createAssignment(
         courseId,
-        creatorMemberId,
+        memberId,
         topic,
         assignmentName,
         instructions,
-        totalMarks
+        totalMarks,
+        dueDate
       );
 
       if (!result.success) {

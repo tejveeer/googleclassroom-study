@@ -12,6 +12,7 @@ export const Input = forwardRef(({
   type = 'primary',
   labelBg = 'bg-white',
   labelPosition = '',
+  className,
   ...props 
 }, ref) => {
   const Component =
@@ -29,6 +30,7 @@ export const Input = forwardRef(({
       isRequired={isRequired}
       labelBg={labelBg}
       labelPosition={labelPosition}
+      className={className}
       {...props} 
     />
   );
@@ -38,7 +40,7 @@ export const Input = forwardRef(({
  * Primary Style
  */
 const InputPrimary = forwardRef(({ 
-  placeholder, error, isRequired, onBlur, onFocus, labelBg, labelPosition, ...props 
+  placeholder, error, isRequired, onBlur, onFocus, labelBg, labelPosition, className, ...props 
 }, ref) => {
   const [isFocused, setIsFocused] = useState(false);
   const internalRef = useRef(null);
@@ -57,7 +59,8 @@ const InputPrimary = forwardRef(({
         isFocused 
           ? !error ? "border-blue-600 ring-1 ring-blue-600" : ""
           : "border-gray-500 hover:border-blue-600",
-        error ? "border-red-500 hover:border-red-600" : ""
+        error ? "border-red-500 hover:border-red-600" : "",
+        className
       )}
     >
       <label className={tw(
@@ -91,7 +94,7 @@ const InputPrimary = forwardRef(({
  * Secondary Style
  */
 const InputSecondary = forwardRef(({ 
-  placeholder, error, isRequired, onBlur, onFocus, labelPosition, ...props 
+  placeholder, error, isRequired, onBlur, onFocus, labelPosition, className, ...props 
 }, ref) => {
   const [isFocused, setIsFocused] = useState(false);
   const internalRef = useRef(null);
@@ -110,7 +113,8 @@ const InputSecondary = forwardRef(({
         isFocused 
           ? "border-blue-600 border-b-2" 
           : "border-gray-400 hover:border-blue-500",
-        error ? "border-red-500 hover:border-red-600" : ""
+        error ? "border-red-500 hover:border-red-600" : "",
+        className
       )}
     >
       <label className={tw(

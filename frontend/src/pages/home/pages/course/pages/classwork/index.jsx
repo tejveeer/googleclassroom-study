@@ -15,7 +15,9 @@ export function ClassworkPage() {
   const [showCreateAssignmentPage, setShowCreateAssignmentPage] = useState(false);
 
   const { topics } = useTopics({ courseId });
+  const topicsArray = topics?.map(topicObject => topicObject.topic) ?? [];
 
+  console.log(topicsArray);
   const isUserTeacher = userRole === "teacher";
   return <>
     <div className="p-6 h-full">
@@ -29,7 +31,8 @@ export function ClassworkPage() {
         <div className="w-62">
           <Select 
             options={[
-              { value: "all", label: "All Topics" }
+              { value: "all", label: "All Topics" },
+              ...topicsArray?.map(topic => ({ "value": topic, "label": topic }))
             ]}
             value={selectedValue}
             onChange={setSelectedValue}
@@ -53,6 +56,8 @@ export function ClassworkPage() {
       {showCreateAssignmentPage &&
         <CreateAssignmentPage 
           courseId={courseId}
+          setShowCreateAssignmentPage={setShowCreateAssignmentPage}
+          topics={topicsArray}
         />
       }
     </div>
