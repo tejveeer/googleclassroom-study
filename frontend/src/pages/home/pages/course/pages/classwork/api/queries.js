@@ -27,6 +27,6 @@ export function useTopics({ courseId }) {
     enabled: !!courseId,
   });
 
-  const topics = isSuccess ? toCamel(data) : undefined;
-  return { topics, isSuccess, ...rest };
+  const topicsArr = isSuccess ? toCamel(data) : undefined;
+  return { topicsArr, isSuccess, ...rest };
 }

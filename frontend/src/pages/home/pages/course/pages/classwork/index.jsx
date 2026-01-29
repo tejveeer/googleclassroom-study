@@ -3,7 +3,7 @@ import { CreateButton } from "./components/CreateButton";
 import { Select } from "@/components/Select";
 import { useState } from "react";
 import { CreateTopicModal } from "./components/CreateTopicModal";
-import { useTopics } from "./api/queries";
+import { useAssignments, useTopics } from "./api/queries";
 import { CreateAssignmentPage } from "./components/CreateAssignmentPage";
 
 export function ClassworkPage() {
@@ -14,10 +14,12 @@ export function ClassworkPage() {
   const [showCreateTopicModel, setShowCreateTopicModal] = useState(false);
   const [showCreateAssignmentPage, setShowCreateAssignmentPage] = useState(false);
 
-  const { topics } = useTopics({ courseId });
-  const topicsArray = topics?.map(topicObject => topicObject.topic) ?? [];
+  const { topicsArr } = useTopics({ courseId });
+  const topics = topicsArr ?? [];
 
-  console.log(topicsArray);
+  const { assignments } = useAssignments({ courseId });
+  console.log(assignments);
+
   const isUserTeacher = userRole === "teacher";
   return <>
     <div className="p-6 h-full">
@@ -32,7 +34,7 @@ export function ClassworkPage() {
           <Select 
             options={[
               { value: "all", label: "All Topics" },
-              ...topicsArray?.map(topic => ({ "value": topic, "label": topic }))
+              ...topics?.map(tobj => ({ "value": tobj.topic, "label": tobj.topic }))
             ]}
             value={selectedValue}
             onChange={setSelectedValue}
@@ -57,7 +59,7 @@ export function ClassworkPage() {
         <CreateAssignmentPage 
           courseId={courseId}
           setShowCreateAssignmentPage={setShowCreateAssignmentPage}
-          topics={topicsArray}
+          topics={topics}
         />
       }
     </div>

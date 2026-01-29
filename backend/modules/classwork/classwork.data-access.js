@@ -22,7 +22,7 @@ export const repository = {
     ORDER BY ca.created_at DESC;
   `,
   LIST_TOPICS: `
-    SELECT topic
+    SELECT *
     FROM classroom.course_topics
     WHERE course_id = $1
     ORDER BY topic;

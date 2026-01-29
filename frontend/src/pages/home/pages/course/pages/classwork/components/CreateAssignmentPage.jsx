@@ -41,7 +41,8 @@ export function CreateAssignmentPage({ courseId, topics, setShowCreateAssignment
       assignmentName: assignment.assignmentTitle,
       instructions: assignment.assignmentInstructions,
       totalMarks: assignment.totalMarks,
-      dueDate: assignment.dueDate
+      dueDate: assignment.dueDate,
+      topic: assignment.topic
     });
   };
 
@@ -102,6 +103,12 @@ function AssignmentContent({ changeAssignment }) {
     });
   }
 
+  const changeAssignmentInstructions = (e) => {
+    changeAssignment({
+      assignmentInstructions: e.target.value
+    });
+  }
+
   return <>
     <div className="p-5 border-b border-gray-300 sm:border-b-0 sm:flex-1 sm:bg-gray-100/75 sm:border-r">
       <div className="mx-auto max-w-4xl">
@@ -117,6 +124,7 @@ function AssignmentContent({ changeAssignment }) {
             placeholder="Instructions"
             className="mt-4"
             labelBg="bg-gray-75"
+            onChange={changeAssignmentInstructions}
           />
         </div>
       </div>
@@ -158,7 +166,7 @@ function AssignmentSettings({ topics, assignment, changeAssignment }) {
         value={assignment.topic}
         onChange={onChangeTopic}
         options={[
-          ...topics?.map(topic => ({ value: topic, label: topic }))
+          ...topics?.map(topic => ({ value: topic.id, label: topic.topic }))
         ]}
       />
     </div>
