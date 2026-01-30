@@ -13,7 +13,7 @@ export function useAssignments({ courseId }) {
     enabled: !!courseId,
   });
 
-  const assignments = isSuccess ? toCamel(data) : undefined;
+  const assignments = isSuccess ? toCamel(data) : [];
   return { assignments, isSuccess, ...rest };
 }
 
@@ -27,6 +27,6 @@ export function useTopics({ courseId }) {
     enabled: !!courseId,
   });
 
-  const topicsArr = isSuccess ? toCamel(data) : undefined;
-  return { topicsArr, isSuccess, ...rest };
+  const topics = isSuccess ? toCamel(data) : [];
+  return { topics, isSuccess, ...rest };
 }

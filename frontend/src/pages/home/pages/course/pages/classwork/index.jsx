@@ -5,6 +5,7 @@ import { useState } from "react";
 import { CreateTopicModal } from "./components/CreateTopicModal";
 import { useAssignments, useTopics } from "./api/queries";
 import { CreateAssignmentPage } from "./components/CreateAssignmentPage";
+import { Topic } from "./components/Topic";
 
 export function ClassworkPage() {
   const { courseId } = useParams();
@@ -14,11 +15,18 @@ export function ClassworkPage() {
   const [showCreateTopicModel, setShowCreateTopicModal] = useState(false);
   const [showCreateAssignmentPage, setShowCreateAssignmentPage] = useState(false);
 
-  const { topicsArr } = useTopics({ courseId });
-  const topics = topicsArr ?? [];
-
+  const { topics } = useTopics({ courseId });
   const { assignments } = useAssignments({ courseId });
-  console.log(assignments);
+
+  console.log("topics assignments", topics, assignments);
+
+  const getAssignmentsByTopicId = (topicId) => {
+    return assignments.filter(assignment => assignment.topicId === topicId);
+  };
+
+  const getAssignmentsWithoutTopic = () => {
+    return assignments.filter(assignment => assignment.topicId === null);
+  };
 
   const isUserTeacher = userRole === "teacher";
   return <>
@@ -43,10 +51,13 @@ export function ClassworkPage() {
             className="py-3"
           />
         </div>
-        {topics && topics.map(({ topic }, idx) => 
-          <div key={idx} className="text-2xl text-gray-700 pb-4 border-b border-gray-300">
-            {topic}
-          </div>
+        <Topic key="unassigned" topicObject={null} assignments={getAssignmentsWithoutTopic()} />  
+        {topics && topics.map((topicObject) => 
+          <Topic 
+            key={topicObject.id} 
+            topicObject={topicObject} 
+            assignments={getAssignmentsByTopicId(topicObject.id)}
+          />
         )}
       </div>
       {showCreateTopicModel && 
