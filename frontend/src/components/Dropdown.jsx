@@ -31,7 +31,7 @@ export function Dropdown({ dropdownTriggerButtonRef, dropdownButtonObject, class
       className={
         tw(
           className || "right-4 top-4",
-          "absolute rounded-lg flex flex-col py-2 flex-1 bg-gray-200 shadow-md", 
+          "absolute z-10 rounded-lg flex flex-col py-2 flex-1 bg-gray-200 shadow-md", 
         )
       }
     >

@@ -21,8 +21,13 @@ export function createAuthController({ pool }) {
     },
 
     async googleCallback(req, res) {
-      const { code } = req.query;
+      const { code, error } = req.query;
       const { tokens } = await client.getToken(code);
+
+      if (error) {
+        // User denied access or something went wrong on Google's side
+        return res.redirect(`${process.env.AUTH_FINAL_REDIRECT_URL}?error=${error}`);
+      }
 
       const ticket = await client.verifyIdToken({
         idToken: tokens.id_token,
