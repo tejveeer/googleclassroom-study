@@ -10,7 +10,7 @@ export function Login() {
       <button className="
         text-xl cursor-pointer px-6 py-1 self-end
         rounded-lg hover:rounded-xl transition-[border-radius] 
-        ease-out duration-200 bg-pink-400"
+        ease-out duration-200 bg-gray-400"
         onClick={handleLogin}
       >
           Login
