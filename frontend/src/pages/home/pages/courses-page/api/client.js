@@ -1,5 +1,5 @@
 export async function deleteCourse({ courseId }) {
-  const res = await fetch(`http://localhost:3000/api/courses/${courseId}`, {
+  const res = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/api/courses/${courseId}`, {
     credentials: "include",
     method: "DELETE",
     headers: {

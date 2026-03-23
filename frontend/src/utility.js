@@ -32,7 +32,7 @@ export function tw(...args) {
   return twMerge(args);
 }
 
-const BASE_URL = "http://localhost:3000/api";
+const BASE_URL = `${import.meta.env.VITE_APP_BASE_URL}/api`;
 
 async function parseBody(res) {
   // Some endpoints might return empty bodies

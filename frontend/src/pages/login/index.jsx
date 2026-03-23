@@ -1,8 +1,7 @@
-const API_BASE = "http://localhost:3000";
 
 export function Login() {
   const handleLogin = async () => {
-    window.location.href = `${API_BASE}/api/auth/google`;
+    window.location.href = `${import.meta.env.VITE_APP_BASE_URL}/api/auth/google`;
   };
 
   return (
