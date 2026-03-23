@@ -50,7 +50,7 @@ export function createAuthController({ pool }) {
         sameSite: "lax",
         path: "/"
       })
-      res.redirect('http://localhost:5173/');
+      res.redirect(process.env.AUTH_REDIRECT_URL);
     },
 
     async getMe(req, res) {
